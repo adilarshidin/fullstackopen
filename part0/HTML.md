@@ -9,7 +9,7 @@ Work
 Pray
 Repeat
 
-All this content will be rendered as a one line in a browser. I can make it into a paragraph and an unordered list:
+All this content will be rendered as a one line in a browser. You can make it into a paragraph and an unordered list:
 
 ```html
 <p>Way of life:</p>
