@@ -1,6 +1,8 @@
 function Header (properties) {
+  const { name, parts } = properties.course;
+
   return (
-    <h1>{properties.course.name}</h1>
+    <h1>{name}</h1>
   );
 };
 
@@ -14,7 +16,9 @@ function Content (properties) {
   let part_names = [];
   let part_exercises = [];
 
-  properties.course.parts.forEach(part => {
+  const { name, parts } = properties.course;
+
+  parts.forEach(part => {
     part_names.push(part.name)
     part_exercises.push(part.exercises)
   });
@@ -31,7 +35,9 @@ function Content (properties) {
 function Total (properties) {
   let total_exercises = 0;
 
-  properties.course.parts.forEach(part => {
+  const { name, parts } = properties.course;
+
+  parts.forEach(part => {
     total_exercises = total_exercises + part.exercises
   });
 
