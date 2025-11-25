@@ -4,12 +4,12 @@ const Filter = ({ filters, filteredName, setFilteredName, setFilters }) => {
     const newFilters = filters;
 
     if (!newFilteredName) {
-      filters.useFilters = false;    
+      newFilters.useFilters = false;    
     } else {
-      filters.useFilters = true;
+      newFilters.useFilters = true;
     };
 
-    filters.name = newFilteredName;
+    newFilters.name = newFilteredName;
     setFilteredName(newFilteredName);
     setFilters(newFilters);
   };
