@@ -18,7 +18,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filters={filters} filteredName={filteredName} setFilteredName={setFilteredName} setFilters={setFilters} />
+      <Filter filters={filters} filteredName={filteredName}
+              setFilteredName={setFilteredName} setFilters={setFilters} />
       <PersonAdditionForm persons={persons} setPersons={setPersons} />
       <h2>Numbers</h2>
       <ul>
