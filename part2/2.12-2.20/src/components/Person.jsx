@@ -6,12 +6,29 @@ const Person = ({ person, persons, setPersons, setNotificationMessage }) => {
     if (window.confirm(`Delete ${person.name}?`)) {
       deletePersonRequest(person.id)
         .then(data => {
-          const newPersons = persons.filter(item =>
-            item.id !== data.id
-          );
-          setPersons(newPersons);
-          setNotificationMessage(`${person.name} was deleted succesfully.`)
-          setTimeout(() => setNotificationMessage(null), 5000);
+          if (!data) {
+            setNotificationMessage({
+              message: `${person.name} with id ${person.id} could not be deleted`,
+              type: "error"
+            });
+            setTimeout(setNotificationMessage({
+              message: null,
+              type: null
+            }));
+          } else {
+            const newPersons = persons.filter(item =>
+              item.id !== data.id
+            );
+            setPersons(newPersons);
+            setNotificationMessage({
+              message: `${person.name} was deleted succesfully.`,
+              type: "success"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);
+          };
         });
     };
   };

@@ -1,6 +1,6 @@
 const getPersonsRequest = async () => {
   return await fetch("http://127.0.0.1:3001/persons")
-    .then(response => response.json());
+    .then(response => response.json())
 };
 
 const addPersonRequest = async (personToAdd) => {
@@ -10,7 +10,7 @@ const addPersonRequest = async (personToAdd) => {
       body: JSON.stringify(personToAdd)
     })
     .then(response => response.json())
-    .catch(error => alert("Error while adding a new person."));
+    .catch(error => false)
 };
 
 const deletePersonRequest = async (id) => {
@@ -18,7 +18,7 @@ const deletePersonRequest = async (id) => {
     method: "DELETE",
   })
   .then(response => response.json())
-  .catch(error => alert("Could not delete a person."));
+  .catch(error => false)
 };
 
 const updatePersonRequest = async (id, person) => {
@@ -27,7 +27,7 @@ const updatePersonRequest = async (id, person) => {
     body: JSON.stringify(person)
   })
   .then(response => response.json())
-  .catch(error => alert("Could not update the person."))
+  .catch(error => false)
 };
 
 export { 

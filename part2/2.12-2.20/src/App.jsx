@@ -11,10 +11,12 @@ import { getPersonsRequest } from './utils/requests';
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filters, setFilters] = useState(
-    { useFilters: false, name: '' }
+    { useFilters: false, name: "" }
   );
   const [filteredName, setFilteredName] = useState('');
-  const [notificationMessage, setNotificationMessage] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState(
+    { message: "", type: "" }
+  );
 
   const fetchPersons = () => { 
     getPersonsRequest()
@@ -26,7 +28,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} type="success" />
+      <Notification notificationMessage={notificationMessage} />
       <Filter filters={filters} setFilters={setFilters}
               filteredName={filteredName} setFilteredName={setFilteredName} />
       <PersonAdditionForm persons={persons} 

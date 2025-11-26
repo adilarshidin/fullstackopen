@@ -41,31 +41,74 @@ const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => 
 
     if (nameAlreadyExists) {
       if(window.confirm(`${personToAdd.name} - such a name already exists, replace their phone number?`)) {
-        updatePersonRequest(existingPerson.id, { ...existingPerson, number: personToAdd.number });
-        const newPersons = persons.map(person => 
-          person.name === personToAdd.name ? { ...person, number: personToAdd.number } : person
-        );
-        console.log(newPersons);
-        setPersons(newPersons);
-        setNotificationMessage(
-          `The number for  ${personToAdd.name} was succesfully changed to ${personToAdd.number}.`);
-        setTimeout(() => setNotificationMessage(null), 5000);  
+        updatePersonRequest(
+          existingPerson.id,
+          { ...existingPerson, number: personToAdd.number }
+        ).then(data => {
+          if (!data) {
+            setNotificationMessage({
+              message: `${personToAdd.name} with id ${personToAdd.id} could not be updated.`,
+              type: "error"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);
+          } else {
+            const newPersons = persons.map(person => 
+              person.name === personToAdd.name ? { ...person, number: personToAdd.number } : person
+            );
+
+            setPersons(newPersons);
+            setNotificationMessage({
+              message: `The number for  ${personToAdd.name} was succesfully changed to ${personToAdd.number}.`,
+              type: "success"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);  
+          };
+        });
       };
     } else if (phoneAlreadyExists) {
-      setNotificationMessage(`${personToAdd.number} - such a phone number already exists.`);
-      setTimeout(() => setNotificationMessage(null), 5000);
+      setNotificationMessage({
+        message: `${personToAdd.number} - such a phone number already exists.`,
+        type: "error"
+      });
+      setTimeout(() => setNotificationMessage({
+        message: null,
+        type: null
+      }), 5000);
     } else {
       addPersonRequest(personToAdd)
         .then(data => {
-          const newPersons = persons.concat(personToAdd);
-          setPersons(newPersons);
-          setNewName('');
-          setNewPhone('');
+          if (!data) {
+            setNotificationMessage({
+              message: `Error adding person ${personToAdd.name}.`,
+              type: "error"
+            });
+            setTimeout(setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);      
+          } else {
+            const newPersons = persons.concat(personToAdd);
+            setPersons(newPersons);
+            setNewName('');
+            setNewPhone('');
+            setNotificationMessage({
+              message: `${personToAdd.name} was added successfully.`,
+              type: "success"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);
+          };
         });
-      setNotificationMessage(`${personToAdd.name} was added successfully.`)
-      setTimeout(setNotificationMessage(null), 5000);
+      };
     };
-  };
 
   return (
     <form>
