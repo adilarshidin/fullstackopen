@@ -1,7 +1,7 @@
 import Person from "./Person";
 
 
-const Persons = ({ persons, setPersons, filters }) => {
+const Persons = ({ persons, setPersons, filters, setNotificationMessage }) => {
   if (filters.useFilters && filters.name) {
     const newPersonsObject = persons.filter(person =>
       person.name.toLowerCase().includes(filters.name.toLowerCase())
@@ -17,7 +17,8 @@ const Persons = ({ persons, setPersons, filters }) => {
     return (
       persons.map(person =>
         <Person key={person.id} person={person}
-                persons={persons} setPersons={setPersons} />
+                persons={persons} setPersons={setPersons}
+                setNotificationMessage={setNotificationMessage} />
       )
     )
   };

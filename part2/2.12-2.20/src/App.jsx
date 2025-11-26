@@ -3,13 +3,18 @@ import { useState, useEffect } from 'react';
 import Persons from './components/Persons';
 import PersonAdditionForm from './components/PersonAdditionForm';
 import Filter from './components/Filter';
+import Notification from './components/Notification';
 
 import { getPersonsRequest } from './utils/requests';
 
 
 const App = () => {
   const [persons, setPersons] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("shiiii");
+  const [filters, setFilters] = useState(
+    { useFilters: false, name: '' }
+  );
+  const [filteredName, setFilteredName] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState('');
 
   const fetchPersons = () => { 
     getPersonsRequest()
@@ -18,21 +23,21 @@ const App = () => {
 
   useEffect(fetchPersons, []);
 
-  const [filters, setFilters] = useState(
-    { useFilters: false, name: '' }
-  );
-  const [filteredName, setFilteredName] = useState('');
-
   return (
     <div>
-      <Notification message={errorMessage} />
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} type="success" />
       <Filter filters={filters} setFilters={setFilters}
               filteredName={filteredName} setFilteredName={setFilteredName} />
-      <PersonAdditionForm persons={persons} setPersons={setPersons} />
+      <PersonAdditionForm persons={persons} 
+                          setPersons={setPersons}
+                          setNotificationMessage={setNotificationMessage} />
       <h2>Numbers</h2>
       <ul>
-        <Persons persons={persons} setPersons={setPersons} filters={filters} /> 
+        <Persons persons={persons}
+                 setPersons={setPersons}
+                 filters={filters}
+                 setNotificationMessage={setNotificationMessage} /> 
       </ul>
     </div>
   )

@@ -1,7 +1,7 @@
 import { deletePersonRequest } from "../utils/requests";
 
 
-const Person = ({ person, persons, setPersons }) => {
+const Person = ({ person, persons, setPersons, setNotificationMessage }) => {
   const deletePerson = () => {
     if (window.confirm(`Delete ${person.name}?`)) {
       deletePersonRequest(person.id)
@@ -10,6 +10,8 @@ const Person = ({ person, persons, setPersons }) => {
             item.id !== data.id
           );
           setPersons(newPersons);
+          setNotificationMessage(`${person.name} was deleted succesfully.`)
+          setTimeout(() => setNotificationMessage(null), 5000);
         });
     };
   };

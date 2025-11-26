@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { addPersonRequest, updatePersonRequest } from '../utils/requests';
 
 
-const PersonAdditionForm = ({ persons, setPersons }) => {
+const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => {
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
 
@@ -47,9 +47,13 @@ const PersonAdditionForm = ({ persons, setPersons }) => {
         );
         console.log(newPersons);
         setPersons(newPersons);
+        setNotificationMessage(
+          `The number for  ${personToAdd.name} was succesfully changed to ${personToAdd.number}.`);
+        setTimeout(() => setNotificationMessage(null), 5000);  
       };
     } else if (phoneAlreadyExists) {
-      alert(`${personToAdd.number} - such a phone number already exists.`);
+      setNotificationMessage(`${personToAdd.number} - such a phone number already exists.`);
+      setTimeout(() => setNotificationMessage(null), 5000);
     } else {
       addPersonRequest(personToAdd)
         .then(data => {
@@ -58,6 +62,8 @@ const PersonAdditionForm = ({ persons, setPersons }) => {
           setNewName('');
           setNewPhone('');
         });
+      setNotificationMessage(`${personToAdd.name} was added successfully.`)
+      setTimeout(setNotificationMessage(null), 5000);
     };
   };
 
