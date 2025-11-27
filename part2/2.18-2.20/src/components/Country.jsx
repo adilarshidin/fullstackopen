@@ -1,7 +1,25 @@
+import { useState, useEffect } from "react";
+
+import Weather from "./Weather";
+
+import { getWeatherForLocationRequest } from "../utils/requests";
+
+
 const Country = ({ chosenCountry, imageStyles }) => {
+  const [weatherData, setWeatherData] = useState(null);
+
   if (!chosenCountry) {
     return null;
   };
+
+  const getWeatherForLocation = () => {
+    getWeatherForLocationRequest(chosenCountry.capital[0])
+      .then(data => {
+        setWeatherData(data)
+      });
+    };
+
+  useEffect(getWeatherForLocation, []);
 
   return (
     <div>
@@ -15,6 +33,7 @@ const Country = ({ chosenCountry, imageStyles }) => {
         )}
       </ul>
       <img style={imageStyles} src={chosenCountry.flags.png} />
+      <Weather weatherData={weatherData} />
     </div>
   )
 };
