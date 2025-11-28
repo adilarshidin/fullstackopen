@@ -16,6 +16,7 @@ const unknownRoute = (request, response) => {
 app.use(express.json());
 app.use(morgan(':method :url :status, \
 content-length: :res[content-length], :response-time seconds, body: :body'));
+app.use(express.static('dist'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
@@ -122,7 +123,7 @@ app.post("/api/persons", (request, response) => {
 
 app.use(unknownRoute);
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
 });
