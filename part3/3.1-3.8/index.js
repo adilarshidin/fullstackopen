@@ -1,6 +1,11 @@
 const express = require('express');
+const morgan = require('morgan');
 const app = express();
 
+
+morgan.token('body', function getBody(request) {
+  return JSON.stringify(request.body);
+});
 
 const unknownRoute = (request, response) => {
   return response.status(404).json({
@@ -8,15 +13,9 @@ const unknownRoute = (request, response) => {
   });
 };
 
-const requestLogger = (request, response, next) => {
-  console.log(`Method: ${request.method}`);
-  console.log(`Path: ${request.path}`);
-  console.log(`Body: ${request.body}`);
-  next();
-};
-
 app.use(express.json());
-app.use(requestLogger);
+app.use(morgan(':method :url :status, \
+content-length: :res[content-length], :response-time seconds, body: :body'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
