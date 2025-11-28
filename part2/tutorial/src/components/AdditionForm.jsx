@@ -1,7 +1,5 @@
 import { useState } from 'react';
 
-import { addNoteRequest } from '../utils/requests';
-
 
 const AdditionForm = ({ notes, setNotes }) => {
   const [noteInput, setNoteInput] = useState('');
@@ -18,11 +16,6 @@ const AdditionForm = ({ notes, setNotes }) => {
       id: notes.length + 1,
       important: Math.random() > 0.5,
       content: noteInput
-    };
-    
-    const addNote = addNoteRequest(newNote);
-    if (!addNote) {
-      alert("Could not add a new note.")
     };
 
     setNotes(notes.concat(newNote));
