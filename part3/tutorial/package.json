@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch index.js"
+    "dev": "node --watch index.js",
+    "deploy:full": "rm -rf dist/ && cd ../../part2/tutorial && npm run build && mv dist/ ../../part3/tutorial && cd ../../part3/tutorial && node index.js"
   },
   "dependencies": {
     "express": "^5.1.0"
