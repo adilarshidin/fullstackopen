@@ -11,6 +11,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ message: "Malformed id "});
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({
+      message: error.message
+    });
   };
 
   next(error);
@@ -63,7 +67,7 @@ app.put('/api/notes/:id', (request, response) => {
   })
 });
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   if (!request.body.content) {
     return response.status(400).json({
       error: "content property missing"
@@ -76,6 +80,7 @@ app.post('/api/notes', (request, response) => {
   });
 
   newNote.save().then(result => response.json(result))
+    .catch(error => next(error))
 });
 
 app.use(errorHandler);

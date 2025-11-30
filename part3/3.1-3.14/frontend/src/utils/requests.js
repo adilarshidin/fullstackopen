@@ -13,9 +13,9 @@ const addPersonRequest = async (name, number) => {
   })
     .then(async response => {
       const data = await response.json();
-      return !!data.result;
+      return data;
     })
-    .catch(error => false)
+    .catch(error => error)
 };
 
 const deletePersonRequest = async(id) => {

@@ -23,6 +23,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError" || error.name === "ObjectParameterError") {
     response.status(400).json({ result: false, message: "Malformed id" })
+  } else if (error.name === "ValidationError") {
+    response.status(400).json({ result: false, message: error.message })
   };
 
   next(error);
@@ -79,13 +81,13 @@ app.get("/api/persons/:id", (request, response, next) => {
   .catch(error => next(error))
 });
 
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => response.json(result))
     .catch(error => next(error))
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
   if (!body || !body.name || !body.number) {
     return response.status(400).json({
@@ -107,7 +109,8 @@ app.post("/api/persons", (request, response) => {
     };
 
     return response.json(returnData);
-  });
+  })
+  .catch(error => next(error))
 });
 
 app.put("/api/persons/:id", (request, response, next) => {

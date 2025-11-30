@@ -81,10 +81,10 @@ const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => 
       const newPersons = persons.concat(personToAdd);
 
       addPersonRequest(personToAdd.name, personToAdd.number)
-        .then(result => {
-          if (!result) {
+        .then(data => {
+          if (!data.result) {
             setNotificationMessage({
-              message: `The person ${personToAdd.name} could not be added, error occured`,
+              message: data.message,
               type: "error"
             });
             setTimeout(() => setNotificationMessage({
