@@ -10,12 +10,12 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
   if (error.name === 'CastError') {
-    return response.status(400).send({ message: "Malformed id "});
+    return response.status(400).send({ message: 'Malformed id' });
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({
       message: error.message
     });
-  };
+  }
 
   next(error);
 };
@@ -39,16 +39,16 @@ app.get('/api/notes/:id', (request, response, next) => {
         response.status(404).end();
       }
     })
-    .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/notes/:id', (request, response, next) => {
   Note.findByIdAndDelete(request.params.id)
     .then(result => response.json(result))
-    .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.put('/api/notes/:id', (request, response) => {
+app.put('/api/notes/:id', (request, response, next) => {
   const id = request.params.id;
   const { content, important } = request.body;
 
@@ -63,15 +63,15 @@ app.put('/api/notes/:id', (request, response) => {
     return note.save().then((newNote) => {
       response.json(newNote);
     })
-    .catch(error => next(error));
-  })
+      .catch(error => next(error));
+  });
 });
 
 app.post('/api/notes', (request, response, next) => {
   if (!request.body.content) {
     return response.status(400).json({
-      error: "content property missing"
-    })
+      error: 'content property missing'
+    });
   };
 
   const newNote = new Note ({
@@ -80,10 +80,10 @@ app.post('/api/notes', (request, response, next) => {
   });
 
   newNote.save().then(result => response.json(result))
-    .catch(error => next(error))
+    .catch(error => next(error));
 });
 
 app.use(errorHandler);
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port ${PORT}`);
 });

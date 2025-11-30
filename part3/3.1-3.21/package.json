@@ -10,7 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "build:full": "rm -rf dist/ && cd frontend/ && npm run build && mv dist/ ../"
+    "build:full": "rm -rf dist/ && cd frontend/ && npm run build && mv dist/ ../",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.2.3",
@@ -18,5 +19,11 @@
     "express": "^5.1.0",
     "mongoose": "^9.0.0",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@stylistic/eslint-plugin": "^5.6.1",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0"
   }
 }

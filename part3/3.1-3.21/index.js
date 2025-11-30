@@ -1,6 +1,5 @@
 const express = require('express');
 const morgan = require('morgan');
-const mongoose = require('mongoose');
 const Person = require('./models/person');
 require('dotenv').config();
 const PORT = process.env.PORT || 3001;
@@ -14,17 +13,17 @@ morgan.token('body', function getBody(request) {
 
 const unknownRoute = (request, response) => {
   return response.status(404).json({
-    message: "Unknown route."
+    message: 'Unknown route.'
   });
 };
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
-  if (error.name === "CastError" || error.name === "ObjectParameterError") {
-    response.status(400).json({ result: false, message: "Malformed id" })
-  } else if (error.name === "ValidationError") {
-    response.status(400).json({ result: false, message: error.message })
+  if (error.name === 'CastError' || error.name === 'ObjectParameterError') {
+    response.status(400).json({ result: false, message: 'Malformed id' });
+  } else if (error.name === 'ValidationError') {
+    response.status(400).json({ result: false, message: error.message });
   };
 
   next(error);
@@ -38,7 +37,7 @@ app.set('view engine', 'ejs');
 app.set('views', './views');
 
 
-app.get("/api/persons", (request, response, next) => {
+app.get('/api/persons', (request, response, next) => {
   let persons = [];
   Person.find({}).then(result => {
     result.forEach(person => {
@@ -46,17 +45,17 @@ app.get("/api/persons", (request, response, next) => {
     });
     response.json(persons);
   })
-  .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.get("/info", (request, response, next) => {
+app.get('/info', (request, response, next) => {
   let persons = [];
   Person.find({}).then(result => {
     result.forEach(person => {
       persons.push(person);
 
       return response.render(
-        "info",
+        'info',
         {
           amount: persons.length,
           date: Date()
@@ -64,36 +63,36 @@ app.get("/info", (request, response, next) => {
       );
     });
   })
-  .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.get("/api/persons/:id", (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
     if (!person) {
       return response.status(404).json({
         result: false,
         message: `Person with id ${request.params.id} was not found.`
-      })
+      });
     };
 
     return response.json(person);
   })
-  .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.delete("/api/persons/:id", (request, response, next) => {
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
     .then(result => response.json(result))
-    .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.post("/api/persons", (request, response, next) => {
+app.post('/api/persons', (request, response, next) => {
   const body = request.body;
   if (!body || !body.name || !body.number) {
     return response.status(400).json({
       result: false,
-      message: "Number or name keys missing in the request body."
-    })
+      message: 'Number or name keys missing in the request body.'
+    });
   };
 
   const newPerson = new Person({
@@ -110,15 +109,15 @@ app.post("/api/persons", (request, response, next) => {
 
     return response.json(returnData);
   })
-  .catch(error => next(error))
+    .catch(error => next(error));
 });
 
-app.put("/api/persons/:id", (request, response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   if (!request.body || !request.body.name || !request.body.number) {
     return response.status(400).json({
       result: false,
-      message: "Number or name keys missing in the request body."
-    })
+      message: 'Number or name keys missing in the request body.'
+    });
   };
 
   const id = request.params.id;
@@ -127,18 +126,18 @@ app.put("/api/persons/:id", (request, response, next) => {
       response.status(404).json({
         result: false,
         message: `Person with id ${id} was not found.`
-      })
+      });
     };
     person.number = request.body.number;
 
     person.save().then((newPerson) => response.json(newPerson));
   })
-  .catch(error => next(error))
+    .catch(error => next(error));
 });
 
 app.use(unknownRoute);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`)
+  console.log(`Server listening on port ${PORT}`);
 });
