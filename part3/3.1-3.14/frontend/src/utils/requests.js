@@ -18,4 +18,29 @@ const addPersonRequest = async (name, number) => {
     .catch(error => false)
 };
 
-export { getPersonsRequest, addPersonRequest };
+const deletePersonRequest = async(id) => {
+  return await fetch(`/api/persons/${id}`, {
+    method: "DELETE"
+  })
+    .then(response => response.json())
+    .catch(error => false)
+};
+
+const updatePersonRequest = async(person) => {
+  const payload = { name: person.name, number: person.number };
+  console.log(payload)
+  return await fetch(`/api/persons/${person.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then(response => response.json())
+    .catch(error => false)
+};
+
+export {
+  getPersonsRequest,
+  addPersonRequest,
+  deletePersonRequest,
+  updatePersonRequest
+};

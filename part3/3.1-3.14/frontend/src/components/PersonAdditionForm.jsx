@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { addPersonRequest } from '../utils/requests';
+import { addPersonRequest, updatePersonRequest } from '../utils/requests';
 
 
 const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => {
@@ -21,31 +21,30 @@ const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => 
     event.preventDefault();
     const personToAdd = { 
       name: newName,
-      id: String(persons.length + 1),
       number: newPhone
     };
 
-    let nameAlreadyExists = false;
+    let existingPersonId = '';
     let phoneAlreadyExists = false;
     let existingPerson = null;
 
     persons.forEach(person => {
       if (person.name === personToAdd.name) {
         existingPerson = person;
-        nameAlreadyExists = true;
+        existingPersonId = person._id;
       } else if (person.number === personToAdd.number) {
         existingPerson = person;
         phoneAlreadyExists = true;
       };
     });
 
-    if (nameAlreadyExists) {
+    if (existingPersonId) {
       if(window.confirm(`${personToAdd.name} - such a name already exists, replace their phone number?`)) {
         const newPersons = persons.map(person => 
           person.name === personToAdd.name ? { ...person, number: personToAdd.number } : person
         );
 
-        addPersonRequest(personToAdd.name, personToAdd.number)
+        updatePersonRequest({ id: existingPersonId, name: personToAdd.name, number: personToAdd.number })
           .then(result => {
             if (!result) {
               setNotificationMessage({
