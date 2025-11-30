@@ -10,7 +10,7 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js",
-    "build:full": "rm -rf dist/ && cd ../../part2/tutorial && npm run build && mv dist/ ../../part3/tutorial"
+    "build:full": "rm -rf dist/ && cd frontend && npm run build && mv dist/ ../"
   },
   "dependencies": {
     "dotenv": "^17.2.3",

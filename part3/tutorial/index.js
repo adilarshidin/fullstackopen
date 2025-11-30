@@ -1,35 +1,24 @@
 const express = require('express');
-require('dotenv').config()
+require('dotenv').config();
 
 
 const app = express();
 const PORT = process.env.PORT;
 const Note = require('./models/note');
 
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-];
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ message: "Malformed id "});
+  };
+
+  next(error);
+};
 
 app.use(express.json());
-//app.use(express.static('dist'));
+app.use(express.static('dist'));
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-});
 
 app.get('/api/notes', (request, response) => {
   Note.find({}).then(result => {
@@ -37,29 +26,41 @@ app.get('/api/notes', (request, response) => {
   });
 });
 
-app.get('/api/notes/:id', (request, response) => {
-  const id = request.params.id;
-  const note = notes.find(note => note.id === id);
-
-  if (note) {
-    response.json(note);
-  } else {
-    response.statusMessage = "No note with such id is found";
-    response.status(404).end();
-  }
+app.get('/api/notes/:id', (request, response, next) => {
+  Note.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch(error => next(error))
 });
 
 app.delete('/api/notes/:id', (request, response) => {
+  Note.findByIdAndDelete(request.params.id)
+    .then(result => response.json(result))
+    .catch(error => next(error))
+});
+
+app.put('/api/notes/:id', (request, response) => {
   const id = request.params.id;
-  const note = notes.find(note => note.id === id);
-  if (note) {
-    notes.filter(note => note.id === id ? '' : note);
-    response.statusMessage = "Note successfully deleted";
-    response.status(204).end();
-  } else {
-    response.statusMessage = "No note with such id is found";
-    response.status(404).end();
-  };
+  const { content, important } = request.body;
+
+  Note.findById(id).then(note => {
+    if (!note) {
+      return response.status(404).end();
+    };
+
+    note.content = content;
+    note.important = important;
+
+    return note.save().then((newNote) => {
+      response.json(newNote);
+    })
+    .catch(error => next(error));
+  })
 });
 
 app.post('/api/notes', (request, response) => {
@@ -75,9 +76,9 @@ app.post('/api/notes', (request, response) => {
   });
 
   newNote.save().then(result => response.json(result))
-  notes.concat(newNote);
 });
 
+app.use(errorHandler);
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 });
