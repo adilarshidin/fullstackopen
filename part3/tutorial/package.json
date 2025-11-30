@@ -13,6 +13,7 @@
     "build:full": "rm -rf dist/ && cd ../../part2/tutorial && npm run build && mv dist/ ../../part3/tutorial"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^9.0.0"
   }

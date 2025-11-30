@@ -13,6 +13,7 @@
     "build:full": "rm -rf dist/ && cd frontend/ && npm run build && mv dist/ ../"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mongoose": "^9.0.0",

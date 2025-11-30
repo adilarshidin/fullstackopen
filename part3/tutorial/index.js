@@ -1,5 +1,10 @@
 const express = require('express');
+require('dotenv').config()
+
+
 const app = express();
+const PORT = process.env.PORT;
+const Note = require('./models/note');
 
 let notes = [
   {
@@ -20,14 +25,16 @@ let notes = [
 ];
 
 app.use(express.json());
-app.use(express.static('dist'));
+//app.use(express.static('dist'));
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 });
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(result => {
+    response.json(result);
+  });
 });
 
 app.get('/api/notes/:id', (request, response) => {
@@ -62,16 +69,15 @@ app.post('/api/notes', (request, response) => {
     })
   };
 
-  const newNote = {
+  const newNote = new Note ({
     content: request.body.content,
-    id: String(notes.length + 1),
     important: request.body.important || false
-  };
+  });
+
+  newNote.save().then(result => response.json(result))
   notes.concat(newNote);
-  response.json(newNote);
 });
 
-const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 });

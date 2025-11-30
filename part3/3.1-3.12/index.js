@@ -1,7 +1,11 @@
 const express = require('express');
 const morgan = require('morgan');
-const app = express();
+const mongoose = require('mongoose');
+const Person = require('./models/person');
+require('dotenv').config();
 
+
+const app = express();
 
 morgan.token('body', function getBody(request) {
   return JSON.stringify(request.body);
@@ -20,42 +24,32 @@ app.use(express.static('dist'));
 app.set('view engine', 'ejs');
 app.set('views', './views');
 
-let persons = [
-  { 
-    "id": "1",
-    "name": "Arto Hellas", 
-    "number": "040-123456"
-  },
-  { 
-    "id": "2",
-    "name": "Ada Lovelace", 
-    "number": "39-44-5323523"
-  },
-  { 
-    "id": "3",
-    "name": "Dan Abramov", 
-    "number": "12-43-234345"
-  },
-  { 
-    "id": "4",
-    "name": "Mary Poppendieck", 
-    "number": "39-23-6423122"
-  }
-];
-
 
 app.get("/api/persons", (request, response) => {
-  return response.json(persons);
+  let persons = [];
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      persons.push(person);
+    });
+    response.json(persons);
+  });
 });
 
 app.get("/info", (request, response) => {
-  return response.render(
-    "info",
-    {
-      amount: persons.length,
-      date: Date()
-    }
-  );
+  let persons = [];
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      persons.push(person);
+
+      return response.render(
+        "info",
+        {
+          amount: persons.length,
+          date: Date()
+        }
+      );
+    });
+  });
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -89,35 +83,26 @@ app.delete("/api/persons/:id", (request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-
   if (!body || !body.name || !body.number) {
     return response.status(400).json({
+      result: false,
       message: "Number or name keys missing in the request body."
     })
   };
 
-  const personExists = persons.find(person =>
-    String(person.name).toLowerCase() === String(body.name).toLowerCase()
-  );
-
-  if (personExists) {
-    return response.status(200).json({
-      message: `Person with name ${body.name} already exists.`
-    });
-  };
-
-  const newId = Math.random().toPrecision(9) * 10000000000
-  const newPerson = {
-    id: newId,
+  const newPerson = new Person({
     name: body.name,
     number: body.number
-  };
+  });
 
-  persons.concat(newPerson);
+  newPerson.save().then(result => {
+    console.log(`${newPerson} saved to DB.`);
+    const returnData = {
+      result: true,
+      data: result
+    };
 
-  return response.status(201).json({
-    "message": `Person with id ${newId} was successfully created.`,
-    "data": newPerson
+    return response.json(returnData);
   });
 });
 

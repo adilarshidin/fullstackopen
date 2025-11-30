@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { addPersonRequest } from '../utils/requests';
+
 
 const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => {
   const [newName, setNewName] = useState('');
@@ -43,15 +45,29 @@ const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => 
           person.name === personToAdd.name ? { ...person, number: personToAdd.number } : person
         );
 
-        setPersons(newPersons);
-        setNotificationMessage({
-          message: `The number for  ${personToAdd.name} was succesfully changed to ${personToAdd.number}.`,
-          type: "success"
-        });
-        setTimeout(() => setNotificationMessage({
-          message: null,
-          type: null
-        }), 5000);  
+        addPersonRequest(personToAdd.name, personToAdd.number)
+          .then(result => {
+            if (!result) {
+              setNotificationMessage({
+                message: `The person ${personToAdd.name} could not be added, error occured`,
+                type: "error"
+              });
+              setTimeout(() => setNotificationMessage({
+                message: null,
+                type: null
+              }), 5000);
+            } else {
+              setPersons(newPersons);
+              setNotificationMessage({
+                message: `The number for  ${personToAdd.name} was succesfully changed to ${personToAdd.number}.`,
+                type: "success"
+              });
+              setTimeout(() => setNotificationMessage({
+                message: null,
+                type: null
+              }), 5000);
+            };
+          });
       };
     } else if (phoneAlreadyExists) {
       setNotificationMessage({
@@ -64,17 +80,32 @@ const PersonAdditionForm = ({ persons, setPersons, setNotificationMessage }) => 
       }), 5000);
     } else {
       const newPersons = persons.concat(personToAdd);
-      setPersons(newPersons);
-      setNewName('');
-      setNewPhone('');
-      setNotificationMessage({
-        message: `${personToAdd.name} was added successfully.`,
-        type: "success"
-      });
-      setTimeout(() => setNotificationMessage({
-        message: null,
-        type: null
-      }), 5000);
+
+      addPersonRequest(personToAdd.name, personToAdd.number)
+        .then(result => {
+          if (!result) {
+            setNotificationMessage({
+              message: `The person ${personToAdd.name} could not be added, error occured`,
+              type: "error"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);
+          } else {
+            setPersons(newPersons);
+            setNewName('');
+            setNewPhone('');
+            setNotificationMessage({
+              message: `${personToAdd.name} was added successfully.`,
+              type: "success"
+            });
+            setTimeout(() => setNotificationMessage({
+              message: null,
+              type: null
+            }), 5000);
+          };
+        });
     };
   };
 
