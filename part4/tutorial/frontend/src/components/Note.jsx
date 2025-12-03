@@ -12,7 +12,7 @@ const Note = ({ notes, noteCurrent, setNotes }) => {
     updateNoteRequest(newNote)
       .then(data => {
         const newNotes = notes.map(note =>
-          note.id === data.id ? newNote : note
+          note._id === data.data._id ? newNote : note
         );
         setNotes(newNotes);
       })

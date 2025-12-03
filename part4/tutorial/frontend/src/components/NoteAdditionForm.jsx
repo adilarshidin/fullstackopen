@@ -15,7 +15,11 @@ const NoteAdditionForm = ({ notes, setNotes }) => {
     event.preventDefault();
 
     addNoteRequest(noteInput)
-      .then(data => setNotes(notes.concat(data)))
+      .then(data => {
+        setNotes(notes.concat(data.data))
+      })
+
+    setNoteInput('');
   };
 
   return (

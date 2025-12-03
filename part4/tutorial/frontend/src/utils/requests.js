@@ -5,7 +5,7 @@ const getNotesRequest = async () => {
 
 const updateNoteRequest = async (note) => {
   const body = { content: note.content, important: note.important };
-  return await fetch(`/api/notes/${note.id}`, {
+  return await fetch(`/api/notes/${note._id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)

@@ -6,17 +6,19 @@ if (Note) {
 };
 
 
-notesRouter.get('/', (request, response) => {
-  Note.find({}).then(notes => {
-    response.json(notes);
-  })
+notesRouter.get('/', async (request, response) => {
+  const notesResult = await Note.find({})
     .catch(error => logger.error(`Error occured while fetching notes: ${error}`));
+
+  response.json(notesResult);
 });
 
-notesRouter.get('/:id', (request, response) => {
+notesRouter.get('/:id', async (request, response) => {
   const id = request.params.id;
 
-  Note.findById(id).then(note => {
+  try {
+    const note = await Note.findById(id);
+
     if (note) {
       response.json(note);
     } else {
@@ -25,17 +27,14 @@ notesRouter.get('/:id', (request, response) => {
         message: 'Note was not found.'
       });
     };
-  })
-    .catch(error => {
-      logger.error(`Error occured while fetching note with id ${id}. Error: ${error.message}`);
-      response.status(500).json({
-        result: false,
-        message: 'Error occured while fetching the note.'
-      });
-    });
+  } catch (error) {
+    if (error.name === 'CastError') {
+      response.status(400).end();
+    };
+  };
 });
 
-notesRouter.post('/', (request, response) => {
+notesRouter.post('/', async (request, response) => {
   if (!request.body) {
     response.status(400).json({
       result: false,
@@ -53,46 +52,40 @@ notesRouter.post('/', (request, response) => {
       important: important || false
     });
 
-    newNote.save().then(savedNote => {
-      logger.info(`Successfully saved a new note: ${savedNote}`);
-      response.status(201).json({
-        result: true,
-        message: 'Successfully saved a new note.'
-      });
-    })
-      .catch(error => {
-        logger.error(`Error occured while adding note: ${newNote}. Error: ${error.message}`);
-        response.status(500).json({
-          result: false,
-          message: 'Error occured while adding a new note.'
-        });
-      });
+    const savedNote = await newNote.save();
+
+    logger.info(`Successfully saved a new note: ${savedNote}`);
+    response.status(201).json({
+      result: true,
+      data: savedNote,
+      message: 'Successfully saved a new note.'
+    });
   };
 });
 
-notesRouter.delete('/:id', (request, response) => {
+notesRouter.delete('/:id', async (request, response) => {
   const id = request.params.id;
 
-  Note.findByIdAndDelete(id).then(deletedNote => {
+  const deletedNote = await Note.findByIdAndDelete(id);
+
+  if (deletedNote) {
     logger.info(`Successfully deleted a note: ${deletedNote}`);
-    response.json({
+    response.status(204).json({
       result: true,
       message: 'Note was successfully deleted.'
     });
-  })
-    .catch(error => {
-      logger.error(`Error occured while deleting note with id ${id}. Error: ${error.message}`);
-      response.status(500).json({
-        result: false,
-        message: 'Error occured while deleting a note.'
-      });
+  } else {
+    logger.error(`Error occured while deleting note with id ${id}. Error: ${deletedNote}`);
+    response.status(500).json({
+      result: false,
+      message: 'Error occured while deleting a note.'
     });
+  };
 });
 
 notesRouter.put('/:id', (request, response) => {
   const id = request.params.id;
   const { content, important } = request.body;
-
   Note.findById(id).then(note => {
     if (note) {
       note.content = content;
@@ -102,6 +95,7 @@ notesRouter.put('/:id', (request, response) => {
         logger.info(`Successfully updated a note. Previous: ${note}. Updated: ${savedNote}.`);
         response.json({
           result: true,
+          data: savedNote,
           message: 'Note updated successfully.'
         });
       })

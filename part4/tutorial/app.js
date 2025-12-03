@@ -13,6 +13,7 @@ mongoose.connect(config.MONGO_DB_URI, { family: 4 })
 const app = express();
 
 app.use(express.json());
+app.use(express.static('dist'));
 app.use('/api/notes', notesRouter);
 app.use(middleware.unknownEndpoint);
 

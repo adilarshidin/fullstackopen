@@ -4,8 +4,7 @@ const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 
 const app = express();
-
-
+console.log(config.MONGO_DB_URI);
 mongoose.connect(config.MONGO_DB_URI, { family: 4 })
   .then(console.log('Connected to Mongo DB.'))
   .catch(console.error('Error connecting to Mongo DB.'));

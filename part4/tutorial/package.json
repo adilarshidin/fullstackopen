@@ -7,13 +7,14 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "node --test",
-    "dev": "node --watch index.js",
+    "start": "cross-env NODEENV=production node index.js",
+    "test": "cross-env NODEENV=test node --test",
+    "dev": "cross-env NODEENV=development node --watch index.js",
     "build:full": "rm -rf dist/ && cd frontend && npm run build && mv dist/ ../",
     "lint": "eslint ."
   },
   "dependencies": {
+    "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^9.0.0"
@@ -22,6 +23,7 @@
     "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin": "^5.6.1",
     "eslint": "^9.39.1",
-    "globals": "^16.5.0"
+    "globals": "^16.5.0",
+    "supertest": "^7.1.4"
   }
 }
