@@ -74,6 +74,18 @@ const newBlogWithoutUrl = {
   likes: 9000,
 };
 
+const newUser = {
+  username: 'paultheapostle',
+  name: 'Paul',
+  password: '777'
+};
+
+const newUserInvalidPassword = {
+  username: 'paultheapostle',
+  name: 'Paul',
+  password: '7'
+};
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -155,5 +167,7 @@ module.exports = {
   newBlog,
   newBlogWithoutLikes,
   newBlogWithoutTitle,
-  newBlogWithoutUrl
+  newBlogWithoutUrl,
+  newUser,
+  newUserInvalidPassword
 };

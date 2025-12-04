@@ -1,16 +1,23 @@
+const jwt = require('jsonwebtoken');
+
 const logger = require('../utils/logger');
 const notesRouter = require('express').Router();
 const Note = require('../models/note');
-if (Note) {
-  logger.info('Note model imported.');
+const User = require('../models/user');
+
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '');
+  };
+  return null;
 };
 
 
 notesRouter.get('/', async (request, response) => {
-  const notesResult = await Note.find({})
-    .catch(error => logger.error(`Error occured while fetching notes: ${error}`));
-
-  response.json(notesResult);
+  const notesResult = await Note.find({}).populate('user', { username: true, name: true });
+  await response.json(notesResult);
 });
 
 notesRouter.get('/:id', async (request, response) => {
@@ -47,12 +54,28 @@ notesRouter.post('/', async (request, response) => {
     });
   } else {
     const { content, important } = request.body;
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' });
+    };
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      response.json(404).json({
+        result: true,
+        message: 'User was not found.'
+      });
+    };
+
     const newNote = new Note({
       content: content,
-      important: important || false
+      important: important || false,
+      user: user._id
     });
 
     const savedNote = await newNote.save();
+    user.notes.push(savedNote._id);
+    await user.save();
 
     logger.info(`Successfully saved a new note: ${savedNote}`);
     response.status(201).json({
