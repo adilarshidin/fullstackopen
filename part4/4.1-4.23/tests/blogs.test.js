@@ -5,6 +5,7 @@ const { describe, test, after, beforeEach } = require('node:test');
 
 const listHelper = require('../utils/list_helper');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 const app = require('../app');
 
 const api = supertest(app);
@@ -13,6 +14,7 @@ const api = supertest(app);
 beforeEach(async () => {
   await Blog.deleteMany({});
   await Blog.insertMany(listHelper.blogs);
+  await User.deleteMany({});
 });
 
 test('all blogs', async () => {
@@ -34,80 +36,206 @@ test('blog id format', async () => {
   });
 });
 
-test('add blog', async () => {
-  const currentBlogsResponse = await api.get('/api/blogs');
-  const currentBlogs = await currentBlogsResponse.body;
+describe('POST /api/blogs', async () => {
+  test('valid blog', async () => {
+    const currentBlogsResponse = await api.get('/api/blogs');
+    const currentBlogs = await currentBlogsResponse.body;
 
-  await api.post('/api/blogs')
-    .send(listHelper.newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-  const newBlogsResponse = await api.get('/api/blogs');
-  const newBlogs = await newBlogsResponse.body;
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
 
-  assert.strictEqual(newBlogs.length, currentBlogs.length + 1);
-});
+    const newBlog = listHelper.newBlog;
+    newBlog.user = userResponse.body.userId;
 
-test('add missing likes property', async() => {
-  const insertedBlogResponse = await api.post('/api/blogs')
-    .send(listHelper.newBlogWithoutLikes)
-    .expect(201)
-    .expect('Content-Type', /application\/json/);
-  const insertedBlog = await insertedBlogResponse.body;
-  const includesLikesProperty = Object.keys(insertedBlog).includes('likes');
-  assert.ok(includesLikesProperty);
-});
-
-test('400 status for no title', async () => {
-  const response = await api.post('/api/blogs')
-    .send(listHelper.newBlogWithoutTitle)
-    .expect(400);
-  const statusCode = await response.statusCode;
-  assert.strictEqual(statusCode, 400);
-});
-
-test('400 status for no url', async () => {
-  const response = await api.post('/api/blogs')
-    .send(listHelper.newBlogWithoutUrl)
-    .expect(400);
-  const statusCode = await response.statusCode;
-  assert.strictEqual(statusCode, 400);
-});
-
-describe('delete endpoint', async () => {
-  test('delete with valid id', async () => {
-    const blogsResponse = await api.get('/api/blogs');
-    const blogs = await blogsResponse.body;
-
-    await api.delete(`/api/blogs/${blogs[0].id}`)
-      .expect(204);
+    await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect('Content-Type', /application\/json/);
 
     const newBlogsResponse = await api.get('/api/blogs');
     const newBlogs = await newBlogsResponse.body;
 
-    assert.strictEqual(newBlogs.length, blogs.length - 1);
+    assert.strictEqual(newBlogs.length, currentBlogs.length + 1);
+  });
+
+  test('add missing likes property', async() => {
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlogWithoutLikes;
+    newBlog.user = userResponse.body.userId;
+
+    const insertedBlogResponse = await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const insertedBlog = await insertedBlogResponse.body;
+    const includesLikesProperty = Object.keys(insertedBlog.data).includes('likes');
+
+    assert.ok(includesLikesProperty);
+  });
+
+  test('400 status for no title', async () => {
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlogWithoutTitle;
+    newBlog.user = userResponse.body.userId;
+
+    await api.post('/api/blogs')
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(400);
+  });
+
+  test('400 status for no url', async () => {
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlogWithoutUrl;
+    newBlog.user = userResponse.body.userId;
+
+    await api.post('/api/blogs')
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(400);
+  });
+});
+
+describe('DELETE /api/blogs', async () => {
+  test('valid id', async () => {
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlog;
+    newBlog.user = userResponse.body.userId;
+
+    const newBlogResponse = await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const newBlogId = newBlogResponse.body.data.id;
+
+    const blogsResponse = await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const blogDeletionResponse = await api.delete(`/api/blogs/${newBlogId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    assert.ok(blogDeletionResponse.body.result);
+    assert.strictEqual(blogDeletionResponse.body.message, 'Blog successfully deleted.');
+
+    const newBlogsResponse = await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    assert.strictEqual(newBlogsResponse.body.length, blogsResponse.body.length - 1);
   });
 
   test('400 for non valid id', async () => {
     const invalidId = '5a3d5da59070081a82a3445';
 
-    await api.delete(`/api/blogs/${invalidId}`)
-      .expect(400);
+    await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const blogDeletionResponse = await api.delete(`/api/blogs/${invalidId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    assert.ok(!blogDeletionResponse.body.result);
+    assert.strictEqual(blogDeletionResponse.body.message, 'Invalid id.');
   });
 
   test('404 for non existing entry', async () => {
-    const blogsResponse = await api.get('/api/blogs');
-    const blogs = await blogsResponse.body;
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-    await api.delete(`/api/blogs/${blogs[0].id}`)
-      .expect(204);
-    await api.delete(`/api/blogs/${blogs[0].id}`)
-      .expect(404);
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlog;
+    newBlog.user = userResponse.body.userId;
+
+    const newBlogResponse = await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const newBlogId = newBlogResponse.body.data.id;
+
+    await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    await api.delete(`/api/blogs/${newBlogId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const secondBlogDeletionResponse = await api.delete(`/api/blogs/${newBlogId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .expect(404)
+      .expect('Content-Type', /application\/json/);
+
+    assert.ok(!secondBlogDeletionResponse.body.result);
+    assert.strictEqual(secondBlogDeletionResponse.body.message, 'Blog was not found.');
   });
 });
 
-describe('put endpoint', async () => {
+describe('PUT /api/blogs', async () => {
   test('update with valid id', async () => {
     const blogsResponse = await api.get('/api/blogs');
     const blogs = await blogsResponse.body;
@@ -133,14 +261,42 @@ describe('put endpoint', async () => {
   });
 
   test('update non-existing entry', async () => {
-    const blogsResponse = await api.get('/api/blogs');
-    const blogs = await blogsResponse.body;
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
 
-    await api.delete(`/api/blogs/${blogs[0].id}`)
-      .expect(204);
-    await api.put(`/api/blogs/${blogs[0].id}`)
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlog;
+    newBlog.user = userResponse.body.userId;
+
+    const newBlogResponse = await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const newBlogId = newBlogResponse.body.data.id;
+
+    await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    await api.delete(`/api/blogs/${newBlogId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const blogUpdateResponse = await api.put(`/api/blogs/${newBlogId}`)
       .send({ likes: 1234 })
-      .expect(404);
+      .expect(404)
+      .expect('Content-Type', /application\/json/);
+
+    assert.ok(!blogUpdateResponse.body.result);
+    assert.strictEqual(blogUpdateResponse.body.message, 'Blog was not found.');
   });
 });
 

@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router();
+
 const Blog = require('../models/blog');
 const User = require('../models/user');
 
@@ -8,37 +9,102 @@ blogsRouter.get('/', async (request, response) => {
 });
 
 blogsRouter.post('/', async (request, response) => {
+  const token = request.token;
+
+  if (!token) return await response.status(401).json({
+    result: false,
+    message: 'Missing bearer token.'
+  });
+
   let blog = new Blog(request.body);
 
   if (!blog.url || !blog.title || !blog.user) {
-    return await response.status(400).end();
+    return await response.status(400).json({
+      result: false, message: 'Missing blog info.'
+    });
   } else if (!blog.likes) {
     blog['likes'] = 0;
   };
 
+  try {
+    const requestUserId = request.user;
+
+    if (!requestUserId) return await response.result(401).json({
+      result: false,
+      message: 'Invalid token.'
+    });
+  } catch {
+    return await response.status(401).json({
+      result: false,
+      message: 'Invalid token.'
+    });
+  };
+
   const user = await User.findById(blog.user);
+
+  if (!user) return await response.status(404).json({
+    result: false,
+    message: 'User for this blog was not found.'
+  });
 
   const savedBlog = await blog.save();
   user.blogs.push(savedBlog._id);
   await user.save();
 
-  await response.status(201).json({ result: true });
+  await response.status(201).json({
+    result: true,
+    data: savedBlog
+  });
 });
 
 blogsRouter.delete('/:id', async (request, response) => {
+  const token = request.token;
+
+  if (!token) return await response.status(401).json({
+    result: false,
+    message: 'Missing bearer token.'
+  });
+
   const id = request.params.id;
 
+  if (!request.user) {
+    return await response.status(401).json({
+      result: false,
+      message: 'Invalid token.'
+    });
+  };
+
   try {
-    const deletionResult = await Blog.findByIdAndDelete(id);
-    if (deletionResult) {
-      return await response.status(204).end();
-    } else {
-      return await response.status(404).end();
-    };
+    const blog = await Blog.findById(id);
+    if (!blog) return await response.status(404).json({
+      result: false,
+      message: 'Blog was not found.'
+    });
+
+    if (blog.user.toString() !== request.user) return await response.status(401).json({
+      result: false,
+      message: 'Invalid user for this operation.'
+    });
   } catch (error) {
     if (error.name === 'CastError') {
-      return await response.status(400).end();
+      return await response.status(400).json({
+        result: false,
+        message: 'Invalid id.'
+      });
     };
+  };
+
+  const deletionResult = await Blog.findByIdAndDelete(id);
+  if (deletionResult) {
+    return await response.status(200).json({
+      result: true,
+      message: 'Blog successfully deleted.'
+    });
+  } else {
+    return await response.status(404).json({
+      result: false,
+      message: 'Blog was not found.'
+    });
   };
 });
 
@@ -46,7 +112,10 @@ blogsRouter.put('/:id', async (request, response) => {
   const id = request.params.id;
 
   if (!request.body || !request.body.likes) {
-    return await response.status(400).end();
+    return await response.status(400).json({
+      result: false,
+      message: 'Invalid payload.'
+    });
   };
 
   const body = request.body;
@@ -56,13 +125,19 @@ blogsRouter.put('/:id', async (request, response) => {
     if (blog) {
       Object.assign(blog, body);
       await blog.save();
-      return await response.status(200).end();
+      return await response.status(200).json({ result: true });
     } else {
-      return await response.status(404).end();
+      return await response.status(404).json({
+        result: false,
+        message: 'Blog was not found.'
+      });
     }
   } catch (error) {
     if (error.name === 'CastError') {
-      return await response.status(400).end();
+      return await response.status(400).json({
+        result: false,
+        message: 'Invalid id.'
+      });
     };
   };
 });
