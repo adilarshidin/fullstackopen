@@ -1,0 +1,29 @@
+{
+  "name": "4.1-4.2",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "cross-env NODEENV=test node --test",
+    "dev": "cross-env NODEENV=development node --watch index.js",
+    "start": "cross-env NODEENV=production node index.js",
+    "deploy": "rm -rf dist && cd frontend && npm run build && mv dist/ ../ && cd .. && npm run dev"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@stylistic/eslint-plugin": "^5.6.1",
+    "eslint": "^9.39.1",
+    "supertest": "^7.1.4"
+  }
+}
