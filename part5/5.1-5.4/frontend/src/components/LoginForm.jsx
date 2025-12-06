@@ -1,9 +1,11 @@
 import { useState } from "react";
 
+import Notification from "./Notification";
+
 import { loginRequest } from "../utils/requests";
 
 
-const LoginForm = ({ setUserToken, setUserData }) => {
+const LoginForm = ({ setUserToken, setUserData, setNotificationObject }) => {
   const [usernameInput, setUsername] = useState('');
   const [passwordInput, setPassword] = useState('');
 
@@ -28,7 +30,10 @@ const LoginForm = ({ setUserToken, setUserData }) => {
       setUsername('');
       setPassword('');
     } else {
-      alert(loginResult.message);
+      setNotificationObject({ message: loginResult.message, type: "error" });
+      setTimeout(() => setNotificationObject({
+        message: "", type: ""
+      }), 5000);
     };
   };
 

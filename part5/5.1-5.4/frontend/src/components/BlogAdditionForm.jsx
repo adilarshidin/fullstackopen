@@ -3,7 +3,7 @@ import { useState } from "react";
 import { addBlogRequest } from "../utils/requests";
 
 
-const BlogAdditionForm = ({ blogs, setBlogs, userData }) => {
+const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject }) => {
   const [titleInput, setTitle] = useState('');
   const [authorInput, setAuthor] = useState('');
   const [urlInput, setUrl] = useState('');
@@ -28,7 +28,13 @@ const BlogAdditionForm = ({ blogs, setBlogs, userData }) => {
     const addBlogResult = await addBlogRequest(
       titleInput, authorInput, urlInput, userData.id, userData.token);
     if (!addBlogResult.result) {
-      alert(addBlogResult.message);
+      setNotificationObject({
+        message: addBlogResult.message,
+        type: "error"
+      });
+      setTimeout(() => setNotificationObject({
+        message: "", type: ""
+      }), 5000);
     } else {
       const newBlogs = blogs.concat({
         id: addBlogResult.data.id,
@@ -41,7 +47,13 @@ const BlogAdditionForm = ({ blogs, setBlogs, userData }) => {
         }
       });
       setBlogs(newBlogs);
-      alert(addBlogResult.message);
+      setNotificationObject({
+        message: addBlogResult.message,
+        type: "success"
+      });
+      setTimeout(() => setNotificationObject({
+        message: "", type: ""
+      }), 5000);
     };
   };
 

@@ -1,17 +1,23 @@
 import { deleteBlogRequest } from "../utils/requests";
 
 
-const Blog = ({ blog, blogs, setBlogs, userToken }) => {
+const Blog = ({ blog, blogs, setBlogs, userToken, setNotificationObject }) => {
   if (!blog) return null;
 
   const handleBlogDeletion = async () => {
     const blogDeletionResult = await deleteBlogRequest(blog.id, userToken)
     if (!blogDeletionResult.result) {
-      alert(blogDeletionResult.message);
+      setNotificationObject({ message: blogDeletionResult.message, type: "error" });
+      setTimeout(() => setNotificationObject({
+        message: "", type: ""
+      }), 5000);
     } else {
       const newBlogs = blogs.filter(currentBlog => currentBlog.id === blog.id ? '' : currentBlog);
       setBlogs(newBlogs);
-      alert(blogDeletionResult.message);
+      setNotificationObject({ message: blogDeletionResult.message, type: "success" });
+      setTimeout(() => setNotificationObject({
+        message: "", type: ""
+      }), 5000);
     };
   };
 
