@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import Notification from "./Notification";
-
-import { loginRequest } from "../utils/requests";
+import { loginRequest } from '../utils/requests';
 
 
-const LoginForm = ({ setUserToken, setUserData, setNotificationObject }) => {
+const LoginForm = ({ setUserData, setNotificationObject }) => {
   const [usernameInput, setUsername] = useState('');
   const [passwordInput, setPassword] = useState('');
 
@@ -25,14 +23,13 @@ const LoginForm = ({ setUserToken, setUserData, setNotificationObject }) => {
 
     if (loginResult.result) {
       await window.localStorage.setItem('user', JSON.stringify(loginResult.data));
-      setUserToken(loginResult.data.token);
       setUserData(loginResult.data);
       setUsername('');
       setPassword('');
     } else {
-      setNotificationObject({ message: loginResult.message, type: "error" });
+      setNotificationObject({ message: loginResult.message, type: 'error' });
       setTimeout(() => setNotificationObject({
-        message: "", type: ""
+        message: '', type: ''
       }), 5000);
     };
   };
@@ -40,13 +37,13 @@ const LoginForm = ({ setUserToken, setUserData, setNotificationObject }) => {
   return (
     <form onSubmit={handleLogin}>
       <h3>Please enter your username and password to login</h3>
-      <label for="username">Username</label>
-      <input id="username" value={usernameInput} onChange={handleUsernameInput} />
-      <label for="password">Password</label>
-      <input id="password" value={passwordInput} onChange={handlePasswordInput} />
-      <button type="submit">Submit</button>
+      <label for='username'>Username</label>
+      <input id='username' value={usernameInput} onChange={handleUsernameInput} />
+      <label for='password'>Password</label>
+      <input id='password' value={passwordInput} onChange={handlePasswordInput} />
+      <button type='submit'>Submit</button>
     </form>
-  )
+  );
 };
 
 export default LoginForm;

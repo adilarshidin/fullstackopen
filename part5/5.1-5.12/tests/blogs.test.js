@@ -55,13 +55,15 @@ describe('POST /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     await api.post('/api/blogs')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
       .send(newBlog)
+      .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const newBlogsResponse = await api.get('/api/blogs');
+    const newBlogsResponse = await api.get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
     const newBlogs = await newBlogsResponse.body;
-
     assert.strictEqual(newBlogs.length, currentBlogs.length + 1);
   });
 
@@ -80,7 +82,7 @@ describe('POST /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     const insertedBlogResponse = await api.post('/api/blogs')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -106,7 +108,7 @@ describe('POST /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     await api.post('/api/blogs')
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(400);
   });
@@ -126,7 +128,7 @@ describe('POST /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     await api.post('/api/blogs')
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(400);
   });
@@ -148,7 +150,7 @@ describe('DELETE /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     const newBlogResponse = await api.post('/api/blogs')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -159,7 +161,7 @@ describe('DELETE /api/blogs', async () => {
       .expect('Content-Type', /application\/json/);
 
     const blogDeletionResponse = await api.delete(`/api/blogs/${newBlogId}`)
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
@@ -187,7 +189,7 @@ describe('DELETE /api/blogs', async () => {
       .expect('Content-Type', /application\/json/);
 
     const blogDeletionResponse = await api.delete(`/api/blogs/${invalidId}`)
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .expect(400)
       .expect('Content-Type', /application\/json/);
 
@@ -210,7 +212,7 @@ describe('DELETE /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     const newBlogResponse = await api.post('/api/blogs')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -221,12 +223,12 @@ describe('DELETE /api/blogs', async () => {
       .expect('Content-Type', /application\/json/);
 
     await api.delete(`/api/blogs/${newBlogId}`)
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     const secondBlogDeletionResponse = await api.delete(`/api/blogs/${newBlogId}`)
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .expect(404)
       .expect('Content-Type', /application\/json/);
 
@@ -237,18 +239,35 @@ describe('DELETE /api/blogs', async () => {
 
 describe('PUT /api/blogs', async () => {
   test('update with valid id', async () => {
-    const blogsResponse = await api.get('/api/blogs');
-    const blogs = await blogsResponse.body;
-    const id = blogs[0].id;
+    const userResponse = await api.post('/api/users')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const authResponse = await api.post('/api/auth')
+      .send({ username: 'petertheapostle', password: '777' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const newBlog = listHelper.newBlog;
+    newBlog.user = userResponse.body.userId;
+
+    const newBlogResponse = await api.post('/api/blogs')
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+    const newBlogId = newBlogResponse.body.data.id;
     const newLikes = 1234;
 
-    await api.put(`/api/blogs/${id}`)
+    await api.put(`/api/blogs/${newBlogId}`)
+      .set({ 'Authorization': `Bearer ${authResponse.body.data.token}` })
       .send({ likes: newLikes })
       .expect(200);
 
     const updatedBlogsResponse = await api.get('/api/blogs');
     const updatedBlogs = await updatedBlogsResponse.body;
-    const updatedBlog = updatedBlogs.find(blog => blog.id === id);
+    const updatedBlog = updatedBlogs.find(blog => blog.id === newBlogId);
 
     assert.strictEqual(updatedBlog.likes, newLikes);
   });
@@ -275,7 +294,7 @@ describe('PUT /api/blogs', async () => {
     newBlog.user = userResponse.body.userId;
 
     const newBlogResponse = await api.post('/api/blogs')
-      .set('Authorization', `Bearer ${authResponse.body.token}`)
+      .set('Authorization', `Bearer ${authResponse.body.data.token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/);
@@ -286,11 +305,12 @@ describe('PUT /api/blogs', async () => {
       .expect('Content-Type', /application\/json/);
 
     await api.delete(`/api/blogs/${newBlogId}`)
-      .set('Authorization', `Bearer: ${authResponse.body.token}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
     const blogUpdateResponse = await api.put(`/api/blogs/${newBlogId}`)
+      .set('Authorization', `Bearer: ${authResponse.body.data.token}`)
       .send({ likes: 1234 })
       .expect(404)
       .expect('Content-Type', /application\/json/);

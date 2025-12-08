@@ -10,7 +10,8 @@
     "test": "cross-env NODEENV=test node --test",
     "dev": "cross-env NODEENV=development node --watch index.js",
     "start": "cross-env NODEENV=production node index.js",
-    "deploy": "rm -rf dist && cd frontend && npm run build && mv dist/ ../ && cd .. && npm run dev"
+    "deploy": "rm -rf dist && cd frontend && npm run build && mv dist/ ../ && cd .. && npm run dev",
+    "lint": "eslint ."
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -24,6 +25,8 @@
     "@eslint/js": "^9.39.1",
     "@stylistic/eslint-plugin": "^5.6.1",
     "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
     "supertest": "^7.1.4"
   }
 }

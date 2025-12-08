@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-import { addBlogRequest } from "../utils/requests";
+import { addBlogRequest } from '../utils/requests';
 
 
-const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject }) => {
+const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject, togglableRef }) => {
   const [titleInput, setTitle] = useState('');
   const [authorInput, setAuthor] = useState('');
   const [urlInput, setUrl] = useState('');
@@ -30,10 +30,10 @@ const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject }) 
     if (!addBlogResult.result) {
       setNotificationObject({
         message: addBlogResult.message,
-        type: "error"
+        type: 'error'
       });
       setTimeout(() => setNotificationObject({
-        message: "", type: ""
+        message: '', type: ''
       }), 5000);
     } else {
       const newBlogs = blogs.concat({
@@ -43,16 +43,18 @@ const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject }) 
         likes: addBlogResult.data.likes,
         url: urlInput,
         user: {
-          name: userData.name
+          name: userData.name,
+          id: userData.id
         }
       });
       setBlogs(newBlogs);
+      await togglableRef.current.toggleVisibility();
       setNotificationObject({
         message: addBlogResult.message,
-        type: "success"
+        type: 'success'
       });
       setTimeout(() => setNotificationObject({
-        message: "", type: ""
+        message: '', type: ''
       }), 5000);
     };
   };
@@ -61,20 +63,20 @@ const BlogAdditionForm = ({ blogs, setBlogs, userData, setNotificationObject }) 
     <form onSubmit={handleNewBlog}>
       <h4>Add a new blog:</h4>
       <p>
-        <label for="title">Title:</label>
-        <input id="title" value={titleInput} onChange={handleTitleInput} />
+        <label for='title'>Title:</label>
+        <input id='title' value={titleInput} onChange={handleTitleInput} />
       </p>
       <p>
-        <label for="author">Author:</label>
-        <input id="author" value={authorInput} onChange={handleAuthorInput} />
+        <label for='author'>Author:</label>
+        <input id='author' value={authorInput} onChange={handleAuthorInput} />
       </p>
       <p>
-        <label for="url">URL:</label>
-        <input id="url" value={urlInput} onChange={handleUrlInput} />
+        <label for='url'>URL:</label>
+        <input id='url' value={urlInput} onChange={handleUrlInput} />
       </p>
-      <button type="submit">Submit</button>
+      <button type='submit'>Submit</button>
     </form>
-  )
+  );
 };
 
 export default BlogAdditionForm;

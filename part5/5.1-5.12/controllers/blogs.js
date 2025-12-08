@@ -1,4 +1,5 @@
 const blogsRouter = require('express').Router();
+const mongoose = require('mongoose');
 
 const Blog = require('../models/blog');
 const User = require('../models/user');
@@ -110,37 +111,43 @@ blogsRouter.delete('/:id', async (request, response) => {
 });
 
 blogsRouter.put('/:id', async (request, response) => {
+  const token = request.token;
   const id = request.params.id;
+  const body = request.body;
 
-  if (!request.body || !request.body.likes) {
+  if (!mongoose.isValidObjectId(id)) {
+    return await response.status(400).json({
+      result: false,
+      message: 'Invalid id.'
+    });
+  };
+
+  if (!token) return await response.status(401).json({
+    result: false,
+    message: 'Missing bearer token.'
+  });
+
+  if (!body) {
     return await response.status(400).json({
       result: false,
       message: 'Invalid payload.'
     });
   };
 
-  const body = request.body;
+  const updatedBlog = await Blog.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: true,
+    context: 'query'
+  });
 
-  try {
-    const blog = await Blog.findById(id);
-    if (blog) {
-      Object.assign(blog, body);
-      await blog.save();
-      return await response.status(200).json({ result: true });
-    } else {
-      return await response.status(404).json({
-        result: false,
-        message: 'Blog was not found.'
-      });
-    }
-  } catch (error) {
-    if (error.name === 'CastError') {
-      return await response.status(400).json({
-        result: false,
-        message: 'Invalid id.'
-      });
-    };
-  };
+  if (updatedBlog) {
+    return await response.status(200).json({ result: true, data: updatedBlog });
+  } else {
+    return await response.status(404).json({
+      result: false,
+      message: 'Blog was not found.'
+    });
+  }
 });
 
 module.exports = blogsRouter;

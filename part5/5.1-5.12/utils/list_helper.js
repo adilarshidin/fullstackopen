@@ -86,7 +86,7 @@ const newUserInvalidPassword = {
   password: '7'
 };
 
-const dummy = (blogs) => {
+const dummy = () => {
   return 1;
 };
 
