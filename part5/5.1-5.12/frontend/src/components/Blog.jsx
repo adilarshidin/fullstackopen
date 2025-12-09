@@ -109,9 +109,9 @@ const Blog = ({ blog, blogs, setBlogs, userData, setNotificationObject }) => {
     <div style={blogStyles.container}>
       <span style={blogStyles.titleWrapper}>
         <h4 style={blogStyles.title}>{blog.title}</h4>
+        <p style={blogStyles.text}>Author: {blog.author}</p>
       </span>
       <Togglable buttonLabel='View'>
-        <p style={blogStyles.text}>Author: {blog.author}</p>
         <p style={blogStyles.text}>Likes: {currentLikes}</p>
         <a href={blog.url} style={blogStyles.link}>link</a>
         <p style={blogStyles.authorNote}>Written by {blog.user.name}</p>

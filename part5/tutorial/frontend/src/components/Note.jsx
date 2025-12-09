@@ -29,7 +29,7 @@ const Note = ({ notes, noteCurrent, setNotes }) => {
   };
 
   return (
-    <li key={noteCurrent.id}>
+    <li key={noteCurrent.id} className="note">
       {noteCurrent.content}
       <button onClick={toggleImportance}>{noteCurrent.important ? 'mark as non-important' : 'mark as important'}</button>
       <button onClick={deleteNote}>Delete note</button>

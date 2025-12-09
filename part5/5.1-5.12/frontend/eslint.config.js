@@ -41,5 +41,13 @@ export default [
       'no-console': 'off',
       'eol-last': 'error'
     }
+  },
+  {
+    files: ['**/*.test.{js,jsx}'],
+    languageOptions: {
+      globals: {
+        ...globals.vitest
+      }
+    }
   }
 ];

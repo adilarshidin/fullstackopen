@@ -22,11 +22,11 @@ const deleteBlogRequest = async (id, token) => {
   return await deleteBlogResponse.json();
 };
 
-const addBlogRequest = async (title, author, url, id, token) => {
+const addBlogRequest = async (newBlog, id, token) => {
   const addBlogResponse = await fetch('/api/blogs', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body: JSON.stringify({ author: author, title: title, url: url, user: id })
+    body: JSON.stringify({ author: newBlog.author, title: newBlog.title, url: newBlog.url, user: id })
   });
   return await addBlogResponse.json();
 };

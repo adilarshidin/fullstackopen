@@ -33,9 +33,9 @@ const LoginForm = ({ setUserToken, setUserName }) => {
   return (
     <form onSubmit={handleLogin}>
       <h2>Login</h2>
-      <label for="username">Username</label>
+      <label htmlFor="username">Username</label>
       <input id="username" value={usernameInput} onChange={handleUsernameInput} />
-      <label for="password">Password</label>
+      <label htmlFor="password">Password</label>
       <input id="password" value={passwordInput} onChange={handlePasswordInput} />
       <button type="submit">Login</button>
     </form>

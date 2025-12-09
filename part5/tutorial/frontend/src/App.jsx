@@ -39,7 +39,7 @@ const App = () => {
         <h3>User: {userName}</h3>
         <button onClick={handleImportantFilter}>{importantFilter ? 'show all notes' : 'show only important notes'}</button>
         <Content notes={notes} importantFilter={importantFilter} setNotes={setNotes} />
-        <NoteAdditionForm notes={notes} setNotes={setNotes} />
+        <NoteAdditionForm userToken={userToken} notes={notes} setNotes={setNotes} />
       </div>
     )
   }
@@ -49,6 +49,7 @@ const App = () => {
       <h2 style={headerStyles}>Notes</h2>
       {!userToken && loginForm()}
       {userToken && notesBlock()}
+      <p>Note app, Department of Computer Science, University of Helsinki 2025</p>
     </main>
   ) 
 };
