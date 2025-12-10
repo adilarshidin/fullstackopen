@@ -20,7 +20,7 @@ authRouter.post('/', async (request, response) => {
   if (!user) {
     return await response.status(404).json({
       result: false,
-      message: 'User does not exist'
+      message: 'User does not exist.'
     });
   };
 
@@ -29,7 +29,7 @@ authRouter.post('/', async (request, response) => {
   if (!passwordCorrect) {
     return await response.status(401).json({
       result: false,
-      message: 'Invalid username and/or password'
+      message: 'Invalid username and/or password.'
     });
   };
 

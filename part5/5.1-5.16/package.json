@@ -10,6 +10,7 @@
     "test": "cross-env NODEENV=test node --test",
     "dev": "cross-env NODEENV=development node --watch index.js",
     "start": "cross-env NODEENV=production node index.js",
+    "start:test": "cross-env NODEENV=test node --watch index.js",
     "deploy": "rm -rf dist && cd frontend && npm run build && mv dist/ ../ && cd .. && npm run dev",
     "lint": "eslint ."
   },

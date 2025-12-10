@@ -37,9 +37,9 @@ const LoginForm = ({ setUserData, setNotificationObject }) => {
   return (
     <form onSubmit={handleLogin}>
       <h3>Please enter your username and password to login</h3>
-      <label for='username'>Username</label>
+      <label htmlFor='username'>Username</label>
       <input id='username' value={usernameInput} onChange={handleUsernameInput} />
-      <label for='password'>Password</label>
+      <label htmlFor='password'>Password</label>
       <input id='password' value={passwordInput} onChange={handlePasswordInput} />
       <button type='submit'>Submit</button>
     </form>

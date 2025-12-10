@@ -4,6 +4,7 @@ const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 const usersRouter = require('./controllers/users');
 const authRouter = require('./controllers/auth');
+const testRouter = require('./controllers/test');
 const middleware = require('./utils/middlewares');
 
 const app = express();
@@ -20,5 +21,9 @@ app.use(middleware.userExtractor);
 app.use('/api/blogs', blogsRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+
+if (process.env.NODEENV === 'test') {
+  app.use('/api/test', testRouter);
+};
 
 module.exports = app;

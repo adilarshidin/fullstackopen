@@ -106,7 +106,7 @@ const Blog = ({ blog, blogs, setBlogs, userData, setNotificationObject }) => {
   };
 
   return (
-    <div style={blogStyles.container}>
+    <div style={blogStyles.container} className='blog'>
       <span style={blogStyles.titleWrapper}>
         <h4 style={blogStyles.title}>{blog.title}</h4>
         <p style={blogStyles.text}>Author: {blog.author}</p>
