@@ -1,10 +1,12 @@
+import NoteForm from './components/NoteForm';
+import Notes from './components/Notes';
+
+
 const App = () => {
   return (
     <div>
-      <h2>Counter App</h2>
-      <div>
-        <p>Current counter: {}</p>
-      </div>
+      <NoteForm />
+      <Notes />
     </div>
   );
 };
