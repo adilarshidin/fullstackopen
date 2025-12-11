@@ -1,5 +1,24 @@
-import { getId } from '../utils/actionCreators';
+const getId = () => (100000 * Math.random()).toFixed(0);
 
+const upvoteActionCreator = (id) => {
+  return {
+    type: 'UPVOTE',
+    payload: {
+      id: id
+    }
+  };
+};
+
+const createAnecdoteActionCreator = (content) => {
+  return {
+    type: 'CREATE',
+    payload: {
+      content: content,
+      id: String(getId()),
+      votes: 0
+    }
+  };
+};
 
 const anecdotesAtStart = [
   'If it hurts, do it more often',
@@ -30,6 +49,7 @@ const reducer = (state = initialState, action) => {
     return newAnecdotes;
   }
   case 'CREATE': {
+    console.log(action.payload.id);
     return [...state, action.payload];
   }
   };
@@ -38,4 +58,4 @@ const reducer = (state = initialState, action) => {
 
 export default reducer;
 
-export { getId };
+export { upvoteActionCreator, createAnecdoteActionCreator };
