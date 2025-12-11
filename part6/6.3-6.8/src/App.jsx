@@ -2,16 +2,23 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
+import Filter from './components/Filter';
 
 import {
   createAnecdoteActionCreator,
-  upvoteActionCreator
+  upvoteActionCreator,
 } from './reducers/anecdoteReducer';
+import { filterActionCreator } from './reducers/filterReducer';
 
 
 const App = () => {
   const dispatch = useDispatch();
-  const anecdotes = useSelector(state => state);
+  const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (!filter) {
+      return anecdotes;
+    }
+    return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter));
+  });
   const sortedAnecdotes = [...anecdotes].sort(
     (firstAnecdote, secondAnecdote) => secondAnecdote.votes - firstAnecdote.votes);
 
@@ -23,8 +30,14 @@ const App = () => {
     dispatch(createAnecdoteActionCreator(content));
   };
 
+  const filterChangeHandler = (event) => {
+    const newFilterValue = event.target.value;
+    dispatch(filterActionCreator(newFilterValue));
+  };
+
   return (
     <div>
+      <Filter filterChangeHandler={filterChangeHandler} />
       <AnecdoteList sortedAnecdotes={sortedAnecdotes} upvoteHandler={upvoteHandler} />
       <AnecdoteForm addAnecdoteHandler={addAnecdoteHandler} />
     </div>

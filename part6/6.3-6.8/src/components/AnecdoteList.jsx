@@ -12,7 +12,7 @@ const AnecdoteList = ({ sortedAnecdotes, upvoteHandler }) => {
         </div>
       ))}
     </div>
-  )
+  );
 };
 
 export default AnecdoteList;

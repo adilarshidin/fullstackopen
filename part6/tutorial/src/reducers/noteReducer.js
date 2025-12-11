@@ -1,17 +1,36 @@
-const noteReducer = (state = [], action) => {
-  switch (action.type) {
-  case 'NEW_NOTE':
-    return [...state, action.payload];
-  case 'TOGGLE_IMPORTANCE': {
-    const id = action.payload.id;
-    const noteToChange = state.find(note => note.id === id);
-    const updatedNote = { ...noteToChange, important: !noteToChange.important };
-    const newNotes = state.map(note => note.id === id ? updatedNote : note);
-    return newNotes;
-  }
-  default:
-    return state;
-  };
-};
+import { createSlice } from '@reduxjs/toolkit';
 
-export default noteReducer;
+
+const initialState = [
+  {
+    content: 'reducer defines how redux store works',
+    important: true,
+    id: 1,
+  },
+  {
+    content: 'state of store can contain any data',
+    important: false,
+    id: 2,
+  },
+];
+
+const generateId = () => Number((Math.random() * 1000000).toFixed(0));
+
+const noteSlice = createSlice({
+  name: 'notes',
+  initialState,
+  reducers: {
+    createNote(state, action) {
+      return state.concat({ content: action.payload, id: generateId(), important: false });
+    },
+    toggleImportance(state, action) {
+      const id = action.payload;
+      const noteToChange = state.find(note => note.id === id);
+      const updatedNote = { ...noteToChange, important: !noteToChange.important };
+      return state.map(note => note.id === id ? updatedNote : note);
+    }
+  }
+});
+
+export const { createNote, toggleImportance } = noteSlice.actions;
+export default noteSlice.reducer;
