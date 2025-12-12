@@ -11,7 +11,7 @@ const getNotesRequest = async () => {
   return await response.json();
 };
 
-const addNoteRequest = async (note) => {
+const postNoteRequest = async (note) => {
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -25,7 +25,7 @@ const addNoteRequest = async (note) => {
   return await response.json();
 };
 
-const changeNoteImportanceRequest = async (note) => {
+const putNoteRequest = async (note) => {
   const response = await fetch(`${baseUrl}/${note.id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -33,10 +33,10 @@ const changeNoteImportanceRequest = async (note) => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to change note\'s importance.');
+    throw new Error('Failed to update the note.');
   };
 
   return await response.json();
 };
 
-export { getNotesRequest, addNoteRequest, changeNoteImportanceRequest };
+export { getNotesRequest, postNoteRequest, putNoteRequest };

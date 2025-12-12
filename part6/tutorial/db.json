@@ -7,7 +7,7 @@
     },
     {
       "content": "state of store can contain any data",
-      "important": false,
+      "important": true,
       "id": "2"
     },
     {
@@ -27,8 +27,28 @@
     },
     {
       "content": "dsa",
-      "important": false,
+      "important": true,
       "id": "f86e"
+    },
+    {
+      "id": "e72b",
+      "content": "dsadsa",
+      "important": true
+    },
+    {
+      "id": "a057",
+      "content": "123",
+      "important": false
+    },
+    {
+      "id": "d8e2",
+      "content": "dksamdlksad",
+      "important": true
+    },
+    {
+      "id": "014b",
+      "content": "dsadasdsadasd",
+      "important": false
     }
   ]
 }
