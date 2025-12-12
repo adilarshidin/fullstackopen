@@ -14,6 +14,9 @@ const Notification = ({ notification }) => {
   case 'upvote':
     notificationPrefix = 'Upvoted a note:';
     break;
+  case 'error':
+    notificationPrefix = '';
+    break;
   case 'initial':
     notificationPrefix = '';
   };

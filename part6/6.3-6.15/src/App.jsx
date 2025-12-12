@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 import AnecdoteForm from './components/AnecdoteForm';
 import AnecdoteList from './components/AnecdoteList';
@@ -6,6 +7,7 @@ import Filter from './components/Filter';
 import Notification from './components/Notification';
 
 import {
+  setAnecdotes,
   createAnecdoteActionCreator,
   upvoteAnecdoteActionCreator,
 } from './reducers/anecdoteReducer';
@@ -14,10 +16,26 @@ import {
   changeNotificationActionCreator,
   resetNotificationActionCreator
 } from './reducers/notificationReducer';
+import { getAnecdotesRequest, postAnecdoteRequest } from './utils/requests';
 
 
 const App = () => {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    const getAnecdotes = async () => {
+      const fetchedAnecdotes = await getAnecdotesRequest();
+
+      if (!fetchedAnecdotes.result) {
+        dispatch(changeNotificationActionCreator({ type: 'error', content: fetchedAnecdotes.message }));
+        return null;
+      };
+
+      dispatch(setAnecdotes(fetchedAnecdotes));
+    };
+    getAnecdotes();
+  }, [dispatch]);
+
   const anecdotes = useSelector(({ anecdotes, filter }) => {
     if (!filter) {
       return anecdotes;
@@ -33,11 +51,18 @@ const App = () => {
     dispatch(changeNotificationActionCreator({ type: 'upvote', content: id }));
     setTimeout(() => dispatch(resetNotificationActionCreator()), 5000);
   };
-  const addAnecdoteHandler = (event) => {
+  const addAnecdoteHandler = async (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = '';
-    dispatch(createAnecdoteActionCreator(content));
+    const newAnecdote = await postAnecdoteRequest({ content: content, votes: 0 });
+
+    if (!newAnecdote.result) {
+      dispatch(changeNotificationActionCreator({ type: 'error', content: newAnecdote.message }));
+      return null;
+    };
+
+    dispatch(createAnecdoteActionCreator(newAnecdote));
     dispatch(changeNotificationActionCreator({ type: 'create', content: content }));
     setTimeout(() => dispatch(resetNotificationActionCreator()), 5000);
   };
