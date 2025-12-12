@@ -7,16 +7,12 @@ import Filter from './components/Filter';
 import Notification from './components/Notification';
 
 import {
-  setAnecdotes,
+  setAnecdotesActionCreator,
   createAnecdoteActionCreator,
   upvoteAnecdoteActionCreator,
 } from './reducers/anecdoteReducer';
 import { switchFilter } from './reducers/filterReducer';
-import {
-  changeNotificationActionCreator,
-  resetNotificationActionCreator
-} from './reducers/notificationReducer';
-import { getAnecdotesRequest, postAnecdoteRequest } from './utils/requests';
+import { setNotificationActionCreator } from './reducers/notificationReducer';
 
 
 const App = () => {
@@ -24,14 +20,7 @@ const App = () => {
 
   useEffect(() => {
     const getAnecdotes = async () => {
-      const fetchedAnecdotes = await getAnecdotesRequest();
-
-      if (!fetchedAnecdotes.result) {
-        dispatch(changeNotificationActionCreator({ type: 'error', content: fetchedAnecdotes.message }));
-        return null;
-      };
-
-      dispatch(setAnecdotes(fetchedAnecdotes));
+      dispatch(setAnecdotesActionCreator());
     };
     getAnecdotes();
   }, [dispatch]);
@@ -46,25 +35,16 @@ const App = () => {
     (firstAnecdote, secondAnecdote) => secondAnecdote.votes - firstAnecdote.votes);
   const notification = useSelector(({ notification }) => notification);
 
-  const upvoteHandler = (id) => {
-    dispatch(upvoteAnecdoteActionCreator(id));
-    dispatch(changeNotificationActionCreator({ type: 'upvote', content: id }));
-    setTimeout(() => dispatch(resetNotificationActionCreator()), 5000);
+  const upvoteHandler = (anecdote) => {
+    dispatch(upvoteAnecdoteActionCreator(anecdote));
+    dispatch(setNotificationActionCreator({ message: `Upvoted an anecdote: ${anecdote.id}`, timeout: 5000 }));
   };
   const addAnecdoteHandler = async (event) => {
     event.preventDefault();
     const content = event.target.anecdote.value;
     event.target.anecdote.value = '';
-    const newAnecdote = await postAnecdoteRequest({ content: content, votes: 0 });
-
-    if (!newAnecdote.result) {
-      dispatch(changeNotificationActionCreator({ type: 'error', content: newAnecdote.message }));
-      return null;
-    };
-
-    dispatch(createAnecdoteActionCreator(newAnecdote));
-    dispatch(changeNotificationActionCreator({ type: 'create', content: content }));
-    setTimeout(() => dispatch(resetNotificationActionCreator()), 5000);
+    dispatch(createAnecdoteActionCreator({ content: content, votes: 0 }));
+    dispatch(setNotificationActionCreator({ message: `Created an anecdote: ${content}`, timeout: 5000 }));
   };
 
   const filterChangeHandler = (event) => {

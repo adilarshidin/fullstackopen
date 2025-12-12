@@ -7,7 +7,7 @@ const AnecdoteList = ({ sortedAnecdotes, upvoteHandler }) => {
           <div>{anecdote.content}</div>
           <div>
             has {anecdote.votes} votes
-            <button onClick={() => upvoteHandler(anecdote.id)}>vote</button>
+            <button onClick={() => upvoteHandler(anecdote)}>vote</button>
           </div>
         </div>
       ))}
