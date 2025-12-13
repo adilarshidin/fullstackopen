@@ -1,55 +1,65 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import { useState, useEffect } from 'react';
+
 
 const useField = (type) => {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('');
 
   const onChange = (event) => {
-    setValue(event.target.value)
-  }
+    setValue(event.target.value);
+  };
 
   return {
     type,
     value,
     onChange
-  }
-}
+  };
+};
 
 const useResource = (baseUrl) => {
-  const [resources, setResources] = useState([])
+  const [resources, setResources] = useState([]);
 
-  // ...
+  useEffect(() => {
+    const getResources = async () => {
+      const response = await fetch(baseUrl);
+      setResources(await response.json());
+    };
+    getResources();
+  }, [baseUrl]);
 
-  const create = (resource) => {
-    // ...
-  }
+  const useCreate = async (resource) => {
+    await fetch(baseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(resource)
+    });
+  };
 
   const service = {
-    create
-  }
+    useCreate
+  };
 
   return [
     resources, service
-  ]
-}
+  ];
+};
 
 const App = () => {
-  const content = useField('text')
-  const name = useField('text')
-  const number = useField('text')
+  const content = useField('text');
+  const name = useField('text');
+  const number = useField('text');
 
-  const [notes, noteService] = useResource('http://localhost:3005/notes')
-  const [persons, personService] = useResource('http://localhost:3005/persons')
+  const [notes, noteService] = useResource('http://localhost:3005/notes');
+  const [persons, personService] = useResource('http://localhost:3005/persons');
 
   const handleNoteSubmit = (event) => {
-    event.preventDefault()
-    noteService.create({ content: content.value })
-  }
- 
+    event.preventDefault();
+    noteService.useCreate({ content: content.value });
+  };
+
   const handlePersonSubmit = (event) => {
-    event.preventDefault()
-    personService.create({ name: name.value, number: number.value})
-  }
+    event.preventDefault();
+    personService.useCreate({ name: name.value, number: number.value });
+  };
 
   return (
     <div>
@@ -68,7 +78,7 @@ const App = () => {
       </form>
       {persons.map(n => <p key={n.id}>{n.name} {n.number}</p>)}
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
