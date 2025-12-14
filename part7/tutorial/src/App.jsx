@@ -1,46 +1,43 @@
-import { useState } from 'react';
+import React from 'react'
 
 
-const useCounter = () => {
-  const [value, setValue] = useState(0);
+class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-  const increase = () => {
-    setValue(value + 1);
+    this.state = {
+      anecdotes: [],
+      current: 0
+    };
   };
 
-  const decrease = () => {
-    setValue(value - 1);
+  componentDidMount = async () => {
+    const response = await fetch('http://localhost:3001/anecdotes');
+    this.setState({ anecdotes: await response.json() });
   };
 
-  const zero = () => {
-    setValue(0);
+  handleClick = () => {
+    const current = Math.floor(
+      Math.random() * this.state.anecdotes.length
+    );
+    this.setState({ current });
   };
 
-  return {
-    value,
-    increase,
-    decrease,
-    zero
+  render() {
+    if (this.state.anecdotes.length === 0) {
+      return <div>No anecdotes found...</div>
+    };
+
+    return (
+      <div>
+        <h1>anecdote of the day</h1>
+        <div>
+          {this.state.anecdotes[this.state.current].content}
+        </div>
+        <button onClick={this.handleClick}>next</button>
+      </div>
+    )
   };
-};
-
-const App = () => {
-  const counter = useCounter();
-
-  return (
-    <div>
-      <div>{counter.value}</div>
-      <button onClick={() => counter.increase()}>
-        plus
-      </button>
-      <button onClick={() => counter.decrease()}>
-        minus
-      </button>
-      <button onClick={() => counter.zero()}>
-        zero
-      </button>
-    </div>
-  );
 };
 
 export default App;

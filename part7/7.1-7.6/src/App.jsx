@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useMatch } from 'react-router-dom';
+import { Container } from '@mui/material';
 
 import Menu from './components/Menu';
 import Footer from './components/Footer';
 import Notification from './components/Notification';
+import ViewsRoutes from './components/Routes';
 
 
 const App = () => {
@@ -48,12 +50,13 @@ const App = () => {
   };
 
   return (
-    <div>
-      <h1>Software anecdotes</h1>
+    <Container >
       <Notification />
-      <Menu anecdotes={anecdotes} matchedAnecdote={matchedAnecdote} addNew={addNew} />
+      <h1>Software anecdotes</h1>
+      <Menu />
+      <ViewsRoutes anecdotes={anecdotes} matchedAnecdote={matchedAnecdote} addNew={addNew} />
       <Footer />
-    </div>
+    </Container>
   );
 };
 

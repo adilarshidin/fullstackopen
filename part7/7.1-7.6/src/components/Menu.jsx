@@ -1,32 +1,27 @@
-import {
-  Route, Link, Routes
-} from 'react-router-dom';
-
-import AnecdoteList from './AnecdoteList';
-import About from './About';
-import CreateNew from './CreateNew';
-import Anecdote from './Anecdote';
+import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, IconButton, Button } from '@mui/material';
 
 
-const Menu = ({ anecdotes, matchedAnecdote, addNew }) => {
+const Menu = () => {
   const padding = {
     paddingRight: 5
   };
 
   return (
-    <div>
-      <Link style={padding} to="/anecdotes">anecdotes</Link>
-      <Link style={padding} to="/create-new">create new</Link>
-      <Link style={padding} to="/about">about</Link>
-
-      <Routes>
-        <Route path='/anecdotes/:id' element={<Anecdote anecdote={matchedAnecdote} />} />
-        <Route path='/anecdotes' element={<AnecdoteList anecdotes={anecdotes} />} />
-        <Route path='/create-new' element={<CreateNew addNew={addNew} />} />
-        <Route path='/about' element={<About />} />
-        <Route path='/' element={<div></div>} />
-      </Routes>
-    </div>
+    <AppBar position="static">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" aria-label="menu"></IconButton>
+        <Button color="inherit" component={Link} to="/anecdotes">
+          anecdotes
+        </Button>
+        <Button color="inherit" component={Link} to="/create-new">
+          create new
+        </Button>
+        <Button color="inherit" component={Link} to="/about">
+          about
+        </Button>
+      </Toolbar>
+    </AppBar>
   );
 };
 

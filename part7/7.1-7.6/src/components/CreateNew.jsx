@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { TextField, Button } from '@mui/material';
 
 import { useField } from '../hooks/index';
 import NotificationContext from '../NotificationContext';
@@ -19,7 +20,6 @@ const CreateNew = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(contentField);
     const content = contentField.inputProps.value;
     const author = authorField.inputProps.value;
     const info = infoField.inputProps.value;
@@ -31,7 +31,7 @@ const CreateNew = (props) => {
     });
 
     useNavigateHook('/anecdotes');
-    handleNotification(contentField.value);
+    handleNotification(contentField.inputProps.value);
   };
 
   return (
@@ -39,21 +39,20 @@ const CreateNew = (props) => {
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          content
-          <input name='content' { ...contentField.inputProps } />
+          <TextField label="content" name="content" type="text" { ...contentField.inputProps } />
         </div>
         <div>
-          author
-          <input name='author' { ...authorField.inputProps } />
+          <TextField label="author" name="author" type="text" { ...authorField.inputProps } />
         </div>
         <div>
-          url for more info
-          <input name='info' { ...infoField.inputProps } />
+          <TextField label="url for more info" name="info" type="url" { ...infoField.inputProps } />
         </div>
-        <button>create</button>
-        <button name='reset'
-          type='reset'
-          onClick={reset}>reset</button>
+        <Button variant="contained" color="primary" type="submit">
+          create
+        </Button>
+        <Button variant="contained" color="secondary" name="reset" type="reset" onClick={reset}>
+          reset
+        </Button>
       </form>
     </div>
   );
