@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 import { loginRequest } from "../utils/requests";
+import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
 
-const LoginForm = ({ setUserData, setNotificationObject }) => {
+const LoginForm = ({ setUserData }) => {
   const [usernameInput, setUsername] = useState("");
   const [passwordInput, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   const handleUsernameInput = ({ target }) => {
     const newUsername = target.value;
@@ -28,16 +31,17 @@ const LoginForm = ({ setUserData, setNotificationObject }) => {
       setUserData(loginResult.data);
       setUsername("");
       setPassword("");
+      dispatch(
+        notifyThunkAction(
+          { type: "SUCCESS", message: `${loginResult.data.name} successfully logged in.` }
+        ));
+      dispatch(clearThunkAction({}));
     } else {
-      setNotificationObject({ message: loginResult.message, type: "error" });
-      setTimeout(
-        () =>
-          setNotificationObject({
-            message: "",
-            type: "",
-          }),
-        5000,
-      );
+      dispatch(
+        notifyThunkAction(
+          { type: "ERROR", message: loginResult.message }
+        ));
+      dispatch(clearThunkAction({}));
     }
   };
 

@@ -22,7 +22,7 @@ const deleteBlogRequest = async (id, token) => {
   return await deleteBlogResponse.json();
 };
 
-const addBlogRequest = async (newBlog, id, token) => {
+const postBlogRequest = async (newBlog, id, token) => {
   const addBlogResponse = await fetch("/api/blogs", {
     method: "POST",
     headers: {
@@ -55,6 +55,6 @@ export {
   loginRequest,
   getBlogsRequest,
   deleteBlogRequest,
-  addBlogRequest,
+  postBlogRequest,
   updateBlogRequest,
 };

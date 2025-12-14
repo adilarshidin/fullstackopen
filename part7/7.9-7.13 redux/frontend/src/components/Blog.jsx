@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
-import Togglable from "../components/Togglable";
+import Togglable from "./Togglable";
 
 import { deleteBlogRequest, updateBlogRequest } from "../utils/requests";
+import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
 
-const Blog = ({ blog, blogs, setBlogs, userData, setNotificationObject }) => {
+const Blog = ({ blog, blogs, userData }) => {
+  const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
   const [currentLikes, setCurrentLikes] = useState(blog.likes);
 
@@ -76,28 +79,14 @@ const Blog = ({ blog, blogs, setBlogs, userData, setNotificationObject }) => {
   const handleBlogDeletion = async () => {
     const blogDeletionResult = await deleteBlogRequest(blog.id, userData.token);
     if (!blogDeletionResult.result) {
-      setNotificationObject({
-        message: blogDeletionResult.message,
-        type: "error",
-      });
-      setTimeout(
-        () =>
-          setNotificationObject({
-            message: "",
-            type: "",
-          }),
-        5000,
-      );
+      dispatch(notifyThunkAction({ type: "ERROR", message: blogDeletionResult.message }));
+      dispatch(clearThunkAction());
     } else {
       const newBlogs = blogs.filter((currentBlog) =>
         currentBlog.id === blog.id ? "" : currentBlog,
       );
-      setBlogs(newBlogs);
-      setNotificationObject({
-        message: blogDeletionResult.message,
-        type: "success",
-      });
-      setTimeout(() => setNotificationObject({ message: "", type: "" }), 5000);
+      dispatch(notifyThunkAction({ type: "SUCCESS", message: blogDeletionResult.message }));
+      dispatch(clearThunkAction({}));
     }
   };
 
@@ -112,13 +101,9 @@ const Blog = ({ blog, blogs, setBlogs, userData, setNotificationObject }) => {
           : currentBlog,
       );
       setCurrentLikes(currentLikes + 1);
-      setBlogs(newBlogs);
     } else {
-      setNotificationObject({
-        message: updateBlogResult.message,
-        type: "error",
-      });
-      setTimeout(() => setNotificationObject({ message: "", type: "" }), 5000);
+      dispatch(notifyThunkAction({ type: "ERROR", message: updateBlogResult.message }));
+      dispatch(clearThunkAction());
     }
   };
 

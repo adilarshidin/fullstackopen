@@ -28,7 +28,7 @@ const App = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
     if (!filter) {
       return anecdotes;
-    }
+    };
     return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter));
   });
   const sortedAnecdotes = [...anecdotes].sort(

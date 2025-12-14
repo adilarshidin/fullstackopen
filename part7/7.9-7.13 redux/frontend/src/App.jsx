@@ -10,27 +10,17 @@ const App = () => {
     const storedUser = window.localStorage.getItem("user");
     return storedUser ? JSON.parse(storedUser) : null;
   });
-  const [notificationObject, setNotificationObject] = useState({});
 
   return (
     <main>
       <h2>Blogs App</h2>
-      <Notification
-        message={notificationObject.message}
-        type={notificationObject.type}
-      />
+      <Notification />
       {!userData && (
-        <LoginForm
-          setUserData={setUserData}
-          setNotificationObject={setNotificationObject}
-        />
+        <LoginForm setUserData={setUserData} />
       )}
       {userData && <LogoutButton />}
       {userData && (
-        <Blogs
-          userData={userData}
-          setNotificationObject={setNotificationObject}
-        />
+        <Blogs userData={userData} />
       )}
     </main>
   );
