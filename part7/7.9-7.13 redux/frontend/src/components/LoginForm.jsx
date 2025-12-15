@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useDispatch } from "react-redux";
 
 import { loginRequest } from "../utils/requests";
 import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
+import { UserContext } from "../UserContext";
 
-const LoginForm = ({ setUserData }) => {
+const LoginForm = () => {
   const [usernameInput, setUsername] = useState("");
   const [passwordInput, setPassword] = useState("");
   const dispatch = useDispatch();
+  const { userDataDispatch } = useContext(UserContext);
 
   const handleUsernameInput = ({ target }) => {
     const newUsername = target.value;
@@ -22,25 +24,23 @@ const LoginForm = ({ setUserData }) => {
   const handleLogin = async (event) => {
     event.preventDefault();
     const loginResult = await loginRequest(usernameInput, passwordInput);
-
     if (loginResult.result) {
       await window.localStorage.setItem(
         "user",
         JSON.stringify(loginResult.data),
       );
-      setUserData(loginResult.data);
-      setUsername("");
-      setPassword("");
+      userDataDispatch({ type: "LOGIN", payload: loginResult.data });
       dispatch(
-        notifyThunkAction(
-          { type: "SUCCESS", message: `${loginResult.data.name} successfully logged in.` }
-        ));
+        notifyThunkAction({
+          type: "SUCCESS",
+          message: `${loginResult.data.name} successfully logged in.`,
+        }),
+      );
       dispatch(clearThunkAction({}));
     } else {
       dispatch(
-        notifyThunkAction(
-          { type: "ERROR", message: loginResult.message }
-        ));
+        notifyThunkAction({ type: "ERROR", message: loginResult.message }),
+      );
       dispatch(clearThunkAction({}));
     }
   };

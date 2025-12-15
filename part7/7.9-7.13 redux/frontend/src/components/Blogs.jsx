@@ -31,7 +31,12 @@ const Blogs = ({ userData }) => {
   const handleCreateBlog = async (newBlog) => {
     dispatch(createBlogThunkAction(newBlog, userData.id, userData.token));
     await togglableRef.current.toggleVisibility();
-    dispatch(notifyThunkAction({ type: "SUCCESS", message: "Successfully added a new blog." }));
+    dispatch(
+      notifyThunkAction({
+        type: "SUCCESS",
+        message: "Successfully added a new blog.",
+      }),
+    );
     dispatch(clearThunkAction({}));
   };
 
@@ -40,11 +45,7 @@ const Blogs = ({ userData }) => {
       <h3>User: {userData.name}</h3>
       <hr />
       {blogs.map((blog) => (
-        <Blog
-          blog={blog}
-          blogs={sortedBlogs}
-          userData={userData}
-        />
+        <Blog blog={blog} blogs={sortedBlogs} userData={userData} />
       ))}
       <Togglable buttonLabel="Add a new blog" ref={togglableRef}>
         <BlogAdditionForm

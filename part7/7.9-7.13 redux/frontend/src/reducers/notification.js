@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-
 let timeoutID = null;
 
 const notificationSlice = createSlice({
@@ -12,8 +11,8 @@ const notificationSlice = createSlice({
     },
     clear() {
       return null;
-    }
-  }
+    },
+  },
 });
 
 export const { notify, clear } = notificationSlice.actions;

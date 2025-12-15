@@ -3,9 +3,11 @@ import { useDispatch } from "react-redux";
 
 import Togglable from "./Togglable";
 
-import { updateBlogRequest } from "../utils/requests";
 import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
-import { deleteBlogThunkAction, updateBlogThunkAction } from "../reducers/blogs";
+import {
+  deleteBlogThunkAction,
+  updateBlogThunkAction,
+} from "../reducers/blogs";
 
 const Blog = ({ blog, blogs, userData }) => {
   const dispatch = useDispatch();
@@ -78,7 +80,12 @@ const Blog = ({ blog, blogs, userData }) => {
 
   const handleBlogDeletion = async () => {
     dispatch(deleteBlogThunkAction(blog.id, userData.token));
-    dispatch(notifyThunkAction({ type: "SUCCESS", message: "Blog successfully deleted." }));
+    dispatch(
+      notifyThunkAction({
+        type: "SUCCESS",
+        message: "Blog successfully deleted.",
+      }),
+    );
     dispatch(clearThunkAction({}));
   };
 

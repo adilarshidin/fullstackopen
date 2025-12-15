@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 
-
 const Notification = () => {
   const successStyles = {
     position: "fixed",
@@ -39,7 +38,7 @@ const Notification = () => {
     return <p style={successStyles}>{notification.message}</p>;
   } else if (notification.type === "ERROR") {
     return <p style={errorStyles}>{notification.message}</p>;
-  };
+  }
 };
 
 export default Notification;

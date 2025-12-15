@@ -4,7 +4,7 @@ import {
   getBlogsRequest,
   postBlogRequest,
   deleteBlogRequest,
-  updateBlogRequest
+  updateBlogRequest,
 } from "../utils/requests";
 
 const blogsSlice = createSlice({
@@ -15,22 +15,26 @@ const blogsSlice = createSlice({
       return action.payload;
     },
     createBlog(state, action) {
-      return [...state, { ...action.payload.data, user: { id: action.payload.data.user } }];
+      return [
+        ...state,
+        { ...action.payload.data, user: { id: action.payload.data.user } },
+      ];
     },
     deleteBlog(state, action) {
       const data = action.payload;
-      const newBlogs = state.filter(blog => blog.id === data ? "" : blog);
+      const newBlogs = state.filter((blog) => (blog.id === data ? "" : blog));
       return newBlogs;
     },
     updateBlog(state, action) {
       const data = { ...action.payload, user: { id: action.payload.user } };
-      const newBlogs = state.map(blog => blog.id === data.id ? data : blog);
+      const newBlogs = state.map((blog) => (blog.id === data.id ? data : blog));
       return newBlogs;
-    }
-  }
+    },
+  },
 });
 
-export const { setBlogs, createBlog, deleteBlog, updateBlog } = blogsSlice.actions;
+export const { setBlogs, createBlog, deleteBlog, updateBlog } =
+  blogsSlice.actions;
 
 const getBlogsThunkAction = (token) => {
   return async (dispatch) => {
@@ -65,6 +69,6 @@ export {
   getBlogsThunkAction,
   createBlogThunkAction,
   deleteBlogThunkAction,
-  updateBlogThunkAction
+  updateBlogThunkAction,
 };
 export default blogsSlice.reducer;
