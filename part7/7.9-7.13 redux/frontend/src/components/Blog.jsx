@@ -3,8 +3,9 @@ import { useDispatch } from "react-redux";
 
 import Togglable from "./Togglable";
 
-import { deleteBlogRequest, updateBlogRequest } from "../utils/requests";
+import { updateBlogRequest } from "../utils/requests";
 import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
+import { deleteBlogThunkAction } from "../reducers/blogs";
 
 const Blog = ({ blog, blogs, userData }) => {
   const dispatch = useDispatch();
@@ -77,17 +78,9 @@ const Blog = ({ blog, blogs, userData }) => {
   };
 
   const handleBlogDeletion = async () => {
-    const blogDeletionResult = await deleteBlogRequest(blog.id, userData.token);
-    if (!blogDeletionResult.result) {
-      dispatch(notifyThunkAction({ type: "ERROR", message: blogDeletionResult.message }));
-      dispatch(clearThunkAction());
-    } else {
-      const newBlogs = blogs.filter((currentBlog) =>
-        currentBlog.id === blog.id ? "" : currentBlog,
-      );
-      dispatch(notifyThunkAction({ type: "SUCCESS", message: blogDeletionResult.message }));
-      dispatch(clearThunkAction({}));
-    }
+    dispatch(deleteBlogThunkAction(blog.id, userData.token));
+    dispatch(notifyThunkAction({ type: "SUCCESS", message: "Blog successfully deleted." }));
+    dispatch(clearThunkAction({}));
   };
 
   const handleLike = async () => {

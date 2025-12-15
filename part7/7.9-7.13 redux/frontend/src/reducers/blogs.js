@@ -1,6 +1,6 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 
-import { getBlogsRequest, postBlogRequest } from "../utils/requests";
+import { getBlogsRequest, postBlogRequest, deleteBlogRequest } from "../utils/requests";
 
 const blogsSlice = createSlice({
   name: "blogs",
@@ -12,15 +12,15 @@ const blogsSlice = createSlice({
     createBlog(state, action) {
       return [...state, { ...action.payload.data, user: { id: action.payload.data.user } }];
     },
-    deleteBlogRequest(state, action) {
+    deleteBlog(state, action) {
       const data = action.payload;
-      console.log(data);
-      return state;
+      const newBlogs = state.filter((blog) => blog.id === data ? "" : blog);
+      return newBlogs;
     }
   }
 });
 
-export const { setBlogs, createBlog, deleteBlogRequest } = blogsSlice.actions;
+export const { setBlogs, createBlog, deleteBlog } = blogsSlice.actions;
 
 const getBlogsThunkAction = (token) => {
   return async (dispatch) => {
@@ -36,5 +36,12 @@ const createBlogThunkAction = (blog, id, token) => {
   };
 };
 
-export { getBlogsThunkAction, createBlogThunkAction };
+const deleteBlogThunkAction = (id, token) => {
+  return async (dispatch) => {
+    await deleteBlogRequest(id, token);
+    dispatch(deleteBlog(id));
+  };
+};
+
+export { getBlogsThunkAction, createBlogThunkAction, deleteBlogThunkAction };
 export default blogsSlice.reducer;
