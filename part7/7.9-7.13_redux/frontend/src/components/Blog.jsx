@@ -9,7 +9,7 @@ import {
   updateBlogThunkAction,
 } from "../reducers/blogs";
 
-const Blog = ({ blog, blogs, userData }) => {
+const Blog = ({ blog, userData }) => {
   const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
 
