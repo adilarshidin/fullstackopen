@@ -1,6 +1,11 @@
 import { createSlice, current } from "@reduxjs/toolkit";
 
-import { getBlogsRequest, postBlogRequest, deleteBlogRequest } from "../utils/requests";
+import {
+  getBlogsRequest,
+  postBlogRequest,
+  deleteBlogRequest,
+  updateBlogRequest
+} from "../utils/requests";
 
 const blogsSlice = createSlice({
   name: "blogs",
@@ -14,13 +19,18 @@ const blogsSlice = createSlice({
     },
     deleteBlog(state, action) {
       const data = action.payload;
-      const newBlogs = state.filter((blog) => blog.id === data ? "" : blog);
+      const newBlogs = state.filter(blog => blog.id === data ? "" : blog);
+      return newBlogs;
+    },
+    updateBlog(state, action) {
+      const data = { ...action.payload, user: { id: action.payload.user } };
+      const newBlogs = state.map(blog => blog.id === data.id ? data : blog);
       return newBlogs;
     }
   }
 });
 
-export const { setBlogs, createBlog, deleteBlog } = blogsSlice.actions;
+export const { setBlogs, createBlog, deleteBlog, updateBlog } = blogsSlice.actions;
 
 const getBlogsThunkAction = (token) => {
   return async (dispatch) => {
@@ -43,5 +53,18 @@ const deleteBlogThunkAction = (id, token) => {
   };
 };
 
-export { getBlogsThunkAction, createBlogThunkAction, deleteBlogThunkAction };
+const updateBlogThunkAction = (blog, token) => {
+  return async (dispatch) => {
+    const response = await updateBlogRequest(blog, token);
+    const data = await response;
+    dispatch(updateBlog(data.data));
+  };
+};
+
+export {
+  getBlogsThunkAction,
+  createBlogThunkAction,
+  deleteBlogThunkAction,
+  updateBlogThunkAction
+};
 export default blogsSlice.reducer;

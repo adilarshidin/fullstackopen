@@ -5,12 +5,11 @@ import Togglable from "./Togglable";
 
 import { updateBlogRequest } from "../utils/requests";
 import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
-import { deleteBlogThunkAction } from "../reducers/blogs";
+import { deleteBlogThunkAction, updateBlogThunkAction } from "../reducers/blogs";
 
 const Blog = ({ blog, blogs, userData }) => {
   const dispatch = useDispatch();
   const [hover, setHover] = useState(false);
-  const [currentLikes, setCurrentLikes] = useState(blog.likes);
 
   if (!blog || !userData) return null;
 
@@ -85,19 +84,8 @@ const Blog = ({ blog, blogs, userData }) => {
 
   const handleLike = async () => {
     const userId = blog.user.id;
-    const newBlog = { ...blog, user: userId, likes: currentLikes + 1 };
-    const updateBlogResult = await updateBlogRequest(newBlog, userData.token);
-    if (updateBlogResult.result) {
-      const newBlogs = blogs.map((currentBlog) =>
-        currentBlog.id === updateBlogResult.id
-          ? updateBlogResult.data
-          : currentBlog,
-      );
-      setCurrentLikes(currentLikes + 1);
-    } else {
-      dispatch(notifyThunkAction({ type: "ERROR", message: updateBlogResult.message }));
-      dispatch(clearThunkAction());
-    }
+    const newBlog = { ...blog, user: userId, likes: blog.likes + 1 };
+    dispatch(updateBlogThunkAction(newBlog, userData.token));
   };
 
   return (
@@ -107,7 +95,7 @@ const Blog = ({ blog, blogs, userData }) => {
         <p style={blogStyles.text}>Author: {blog.author}</p>
       </span>
       <Togglable buttonLabel="View">
-        <p style={blogStyles.text}>Likes: {currentLikes}</p>
+        <p style={blogStyles.text}>Likes: {blog.likes}</p>
         <a href={blog.url} style={blogStyles.link}>
           link
         </a>

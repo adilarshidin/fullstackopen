@@ -11,7 +11,6 @@ import { notifyThunkAction, clearThunkAction } from "../reducers/notification";
 const Blogs = ({ userData }) => {
   const dispatch = useDispatch();
   const blogs = useSelector((state) => state.blogs);
-
   useEffect(() => {
     const getBlogs = () => {
       dispatch(getBlogsThunkAction(userData.token));
