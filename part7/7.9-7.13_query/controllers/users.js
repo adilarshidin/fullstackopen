@@ -1,46 +1,49 @@
-const bcrypt = require('bcrypt');
-const usersRouter = require('express').Router();
+const bcrypt = require("bcrypt");
+const usersRouter = require("express").Router();
 
-const config = require('../utils/config');
-const User = require('../models/user');
+const config = require("../utils/config");
+const User = require("../models/user");
 
-
-usersRouter.get('/', async (request, response) => {
-  const users = await User.find({}).populate('blogs',
-    { title: true, author: true, url: true, likes: true });
+usersRouter.get("/", async (request, response) => {
+  const users = await User.find({}).populate("blogs", {
+    title: true,
+    author: true,
+    url: true,
+    likes: true,
+  });
   await response.json(users);
 });
 
-usersRouter.post('/', async (request, response) => {
+usersRouter.post("/", async (request, response) => {
   const { username, name, password } = request.body;
 
   if (password.length < 3) {
     return await response.status(400).json({
       result: false,
-      message: 'Password must be 3 characters or longer.'
+      message: "Password must be 3 characters or longer.",
     });
-  };
+  }
 
   const user = await User.findOne({ username: username }).exec();
   if (user) {
     return await response.json({
       result: false,
-      message: 'Such username already exists.'
+      message: "Such username already exists.",
     });
-  };
+  }
 
   const passwordHash = await bcrypt.hash(password, config.SALT);
-  const newUser = new User ({
+  const newUser = new User({
     username: username,
     name: name,
-    passwordHash: passwordHash
+    passwordHash: passwordHash,
   });
 
   const savedUser = await newUser.save();
 
   return await response.status(201).json({
     result: true,
-    userId: savedUser._id
+    userId: savedUser._id,
   });
 });
 

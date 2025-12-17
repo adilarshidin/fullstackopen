@@ -1,80 +1,66 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDispatch } from "react-redux";
 
-import Blog from './Blog';
-import BlogAdditionForm from './BlogAdditionForm';
-import Togglable from './Togglable';
+import Blog from "./Blog";
+import BlogAdditionForm from "./BlogAdditionForm";
+import Togglable from "./Togglable";
 
-import { getBlogsRequest, addBlogRequest } from '../utils/requests';
-
+import { getBlogsRequest, postBlogRequest } from "../utils/requests";
+import { notifyThunkAction } from "../reducers/notification";
 
 const Blogs = ({ userData, setNotificationObject }) => {
-  const [blogs, setBlogs] = useState([]);
   const togglableRef = useRef();
+  const queryClient = useQueryClient();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const getBlogs = async () => {
-      const newBlogs = await getBlogsRequest(userData.token);
-      setBlogs(newBlogs);
-    };
+  const blogsQuery = useQuery({
+    queryKey: ["blogs"],
+    queryFn: getBlogsRequest,
+    refetchOnWindowFocus: false,
+  });
 
-    getBlogs();
-  }, [userData]);
+  const createBlogMutation = useMutation({
+    mutationFn: async (newBlog) =>
+      await postBlogRequest(newBlog, userData.id, userData.token),
+    onError: (data) => {
+      dispatch(notifyThunkAction({ message: data.message, type: "error" }));
+    },
+    onSuccess: (data) => {
+      togglableRef.current.toggleVisibility();
+      dispatch(notifyThunkAction({ message: data.message, type: "success" }));
+      queryClient.invalidateQueries({ queryKey: ["blogs"] });
+    },
+  });
 
-  if (!blogs || !userData) return null;
+  if (blogsQuery.isLoading) return <div>Loading...</div>;
+  const blogs = blogsQuery.data;
+  const sortedBlogs = blogs.sort(
+    (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes,
+  );
 
-  const sortedBlogs = blogs.sort((firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes);
-
-  const handleCreateBlog = async (newBlog) => {
-    const addBlogResult = await addBlogRequest(newBlog, userData.id, userData.token);
-
-    if (!addBlogResult.result) {
-      setNotificationObject({
-        message: addBlogResult.message,
-        type: 'error'
-      });
-      setTimeout(() => setNotificationObject({
-        message: '', type: ''
-      }), 5000);
-    } else {
-      const newBlogs = blogs.concat({
-        id: addBlogResult.data.id,
-        author: newBlog.author,
-        title: newBlog.title,
-        likes: addBlogResult.data.likes,
-        url: newBlog.url,
-        user: {
-          name: userData.name,
-          id: userData.id
-        }
-      });
-      setBlogs(newBlogs);
-      await togglableRef.current.toggleVisibility();
-      setNotificationObject({
-        message: addBlogResult.message,
-        type: 'success'
-      });
-      setTimeout(() => setNotificationObject({
-        message: '', type: ''
-      }), 5000);
-    };
-  };
+  const handleCreateBlog = (newBlog) => createBlogMutation.mutate(newBlog);
 
   return (
     <div>
       <h3>User: {userData.name}</h3>
       <hr />
-      {blogs.map(blog => <Blog blog={blog}
-        blogs={sortedBlogs}
-        setBlogs={setBlogs}
-        userData={userData}
-        setNotificationObject={setNotificationObject} />)}
-      <Togglable buttonLabel='Add a new blog' ref={togglableRef}>
-        <BlogAdditionForm blogs={sortedBlogs}
-          setBlogs={setBlogs}
+      {blogs.map((blog) => (
+        <Blog
+          blog={blog}
+          blogs={sortedBlogs}
+          userData={userData}
+          setNotificationObject={setNotificationObject}
+        />
+      ))}
+      <Togglable buttonLabel="Add a new blog" ref={togglableRef}>
+        <BlogAdditionForm
+          blogs={sortedBlogs}
           userData={userData}
           setNotificationObject={setNotificationObject}
           togglableRef={togglableRef}
-          handleCreateBlog={handleCreateBlog} />
+          handleCreateBlog={handleCreateBlog}
+        />
       </Togglable>
     </div>
   );

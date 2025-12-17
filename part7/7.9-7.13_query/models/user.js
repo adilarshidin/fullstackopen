@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
-
+const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
   username: {
     type: String,
     unique: true,
     required: true,
-    minLength: 3
+    minLength: 3,
   },
   name: String,
   salt: Number,
@@ -14,16 +13,16 @@ const userSchema = mongoose.Schema({
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog'
-    }
-  ]
+      ref: "Blog",
+    },
+  ],
 });
 
-userSchema.set('toJSON', {
+userSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id;
     delete returnedObject._id;
-  }
+  },
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

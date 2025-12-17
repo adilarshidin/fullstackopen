@@ -1,19 +1,18 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
-const config = require('./config');
-
+const config = require("./config");
 
 const tokenExtractor = async (request, response, next) => {
   try {
-    const token = request.get('authorization');
+    const token = request.get("authorization");
     if (!token) {
       request.token = null;
     } else {
-      request.token = token.split(' ')[1];
+      request.token = token.split(" ")[1];
     }
   } catch {
     request.token = null;
-  };
+  }
   next();
 };
 
@@ -30,7 +29,7 @@ const userExtractor = async (request, response, next) => {
     }
   } catch {
     request.user = null;
-  };
+  }
   next();
 };
 

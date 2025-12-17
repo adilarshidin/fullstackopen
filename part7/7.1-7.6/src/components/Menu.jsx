@@ -3,10 +3,6 @@ import { AppBar, Toolbar, IconButton, Button } from '@mui/material';
 
 
 const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  };
-
   return (
     <AppBar position="static">
       <Toolbar>
