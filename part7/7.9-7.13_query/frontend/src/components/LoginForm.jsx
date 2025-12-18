@@ -5,7 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { loginRequest } from "../utils/requests";
 import { notifyThunkAction } from "../reducers/notification";
 
-const LoginForm = ({ setUserData }) => {
+const LoginForm = () => {
   const [usernameInput, setUsername] = useState("");
   const [passwordInput, setPassword] = useState("");
   const dispatch = useDispatch();
@@ -26,10 +26,10 @@ const LoginForm = ({ setUserData }) => {
       dispatch(notifyThunkAction({ message: data.message, type: "error" }));
     },
     onSuccess: (data) => {
-      window.localStorage.setItem("user", JSON.stringify(data));
-      setUserData(data.data);
+      window.localStorage.setItem("user", JSON.stringify(data.data));
       setUsername("");
       setPassword("");
+      location.reload();
     },
   });
 

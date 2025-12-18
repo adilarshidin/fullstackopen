@@ -67,10 +67,21 @@ const updateBlogRequest = async (blog, token) => {
   return data;
 };
 
+const getUsersRequest = async () => {
+  const getUsersResponse = await fetch("/api/users");
+
+  const data = await getUsersResponse.json();
+
+  if (!getUsersResponse.ok) throw { ...data };
+
+  return data;
+};
+
 export {
   loginRequest,
   getBlogsRequest,
   deleteBlogRequest,
   postBlogRequest,
   updateBlogRequest,
+  getUsersRequest
 };

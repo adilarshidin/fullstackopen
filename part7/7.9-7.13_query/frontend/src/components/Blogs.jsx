@@ -9,10 +9,12 @@ import Togglable from "./Togglable";
 import { getBlogsRequest, postBlogRequest } from "../utils/requests";
 import { notifyThunkAction } from "../reducers/notification";
 
-const Blogs = ({ userData, setNotificationObject }) => {
+const Blogs = () => {
   const togglableRef = useRef();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+  const storedUser = window.localStorage.getItem("user");
+  const userData = storedUser ? JSON.parse(storedUser) : null;
 
   const blogsQuery = useQuery({
     queryKey: ["blogs"],
@@ -33,6 +35,8 @@ const Blogs = ({ userData, setNotificationObject }) => {
     },
   });
 
+  if (!userData) return null;
+
   if (blogsQuery.isLoading) return <div>Loading...</div>;
   const blogs = blogsQuery.data;
   const sortedBlogs = blogs.sort(
@@ -50,14 +54,12 @@ const Blogs = ({ userData, setNotificationObject }) => {
           blog={blog}
           blogs={sortedBlogs}
           userData={userData}
-          setNotificationObject={setNotificationObject}
         />
       ))}
       <Togglable buttonLabel="Add a new blog" ref={togglableRef}>
         <BlogAdditionForm
           blogs={sortedBlogs}
           userData={userData}
-          setNotificationObject={setNotificationObject}
           togglableRef={togglableRef}
           handleCreateBlog={handleCreateBlog}
         />

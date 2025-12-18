@@ -96,7 +96,7 @@ const Blog = ({ blog, userData }) => {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["blogs"], (oldBlogs) =>
-        oldBlogs.map((oldBlog) => (oldBlog.id === blog.id ? data.data : blog)),
+        oldBlogs.map((oldBlog) => (oldBlog.id === blog.id ? data.data : oldBlog)),
       );
     },
   });
