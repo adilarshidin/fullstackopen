@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 
 import { getUsersRequest } from "../utils/requests";
 
@@ -26,7 +27,7 @@ const Users = () => {
           {usersQuery.data.map(user =>
             <tr>
               <td>
-                {user.name}
+                <Link to={`/blogs/${user.id}`}>{user.name}</Link>
               </td>
               <td>
                 {user.blogs.length}

@@ -7,6 +7,8 @@ const ViewRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<Blogs />} />
+      <Route path="/blogs" element={<Blogs />} />
+      <Route path="/blogs/:id" element={<Blogs />} />
       <Route path="/users" element={<Users />} />
     </Routes>
   );

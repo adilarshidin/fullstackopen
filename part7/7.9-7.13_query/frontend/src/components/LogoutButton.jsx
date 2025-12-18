@@ -1,7 +1,7 @@
 const LogoutButton = () => {
   const handleLogout = () => {
     window.localStorage.removeItem("user");
-    location.reload();
+    location.replace("/");
   };
 
   return <button onClick={handleLogout}>Logout</button>;
