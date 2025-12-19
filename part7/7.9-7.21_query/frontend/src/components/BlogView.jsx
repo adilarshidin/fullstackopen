@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMatch } from "react-router";
 import { useDispatch } from "react-redux";
+import { Card, Form, Button } from "react-bootstrap";
 
 import { getBlogsRequest, updateBlogRequest } from "../utils/requests";
 import { notifyThunkAction } from "../reducers/notification";
@@ -44,13 +45,17 @@ const BlogView = () => {
 
   return (
     <div>
-      <h2>{matchedBlog.title}</h2>
-      <p>Author: {matchedBlog.author}</p>
-      <p>URL: {matchedBlog.url}</p>
-      <p>Likes: {matchedBlog.likes}</p>
-      <p>Created by user: {matchedBlog.user.name}</p>
+      <Card style={{ margin: "2%" }}>
+        <Card.Body>
+          <Card.Title>{matchedBlog.title}</Card.Title>
+          <p>Author: {matchedBlog.author}</p>
+          <p>URL: {matchedBlog.url}</p>
+          <p>Likes: {matchedBlog.likes}</p>
+          <p>Created by user: {matchedBlog.user.name}</p>
+        </Card.Body>
+      </Card>
 
-      <div>
+      <div style={{ margin: "2%" }}>
         <h3>Comments</h3>
         <ul>
           {matchedBlog.comments ? matchedBlog.comments.map(comment =>
@@ -58,11 +63,15 @@ const BlogView = () => {
           ) : null}
         </ul>
       </div>
-
-      <form onSubmit={handleComment}>
-        <input value={commentInput} onChange={handleCommentInput} />
-        <button type="submit">Submit</button>
-      </form>
+      <Form onSubmit={handleComment}>
+        <Form.Group className="mb-3" controlId="username">
+          <Form.Control
+            type="text"
+            value={commentInput}
+            onChange={handleCommentInput} />
+          <Button variant="primary" type="submit">Submit</Button>
+        </Form.Group>
+      </Form>
     </div>
   );
 };

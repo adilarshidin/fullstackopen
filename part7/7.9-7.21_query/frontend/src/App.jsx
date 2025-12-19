@@ -8,8 +8,7 @@ const App = () => {
   const userData = storedUser ? JSON.parse(storedUser) : null;
 
   return (
-    <main>
-      <h2>Blogs App</h2>
+    <main className="container">
       <Notification />
       {!userData && <LoginForm />}
       {userData && <Menu />}

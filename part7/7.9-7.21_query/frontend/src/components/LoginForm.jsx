@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useMutation } from "@tanstack/react-query";
+import { Form, Button } from "react-bootstrap";
 
 import { loginRequest } from "../utils/requests";
 import { notifyThunkAction } from "../reducers/notification";
@@ -39,22 +40,28 @@ const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <Form onSubmit={handleLogin}>
       <h3>Please enter your username and password to login</h3>
-      <label htmlFor="username">Username</label>
-      <input
-        id="username"
-        value={usernameInput}
-        onChange={handleUsernameInput}
-      />
-      <label htmlFor="password">Password</label>
-      <input
-        id="password"
-        value={passwordInput}
-        onChange={handlePasswordInput}
-      />
-      <button type="submit">Submit</button>
-    </form>
+      <Form.Group className="mb-3" controlId="username">
+        <Form.Label>Username</Form.Label>
+        <Form.Control
+          type="username"
+          placeholder="enter username"
+          value={usernameInput}
+          onChange={handleUsernameInput} />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="password">
+        <Form.Label>Password</Form.Label>
+        <Form.Control
+          type="password"
+          placeholder="enter password"
+          value={passwordInput}
+          onChange={handlePasswordInput} />
+      </Form.Group>
+
+      <Button variant="primary" type="submit">Submit</Button>
+    </Form>
   );
 };
 
