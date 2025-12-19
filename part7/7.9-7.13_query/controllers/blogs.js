@@ -159,4 +159,45 @@ blogsRouter.put("/:id", async (request, response) => {
   }
 });
 
+blogsRouter.put("/:id/comments", async (request, response) => {
+  const token = request.token;
+  const id = request.params.id;
+  const body = request.body;
+
+  if (!mongoose.isValidObjectId(id)) {
+    return await response.status(400).json({
+      result: false,
+      message: "Invalid id.",
+    });
+  }
+
+  if (!token)
+    return await response.status(401).json({
+      result: false,
+      message: "Missing bearer token.",
+    });
+
+  if (!body) {
+    return await response.status(400).json({
+      result: false,
+      message: "Invalid payload.",
+    });
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(id, body, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  }).populate("user", { username: true, name: true });
+
+  if (updatedBlog) {
+    return await response.status(200).json({ result: true, data: updatedBlog });
+  } else {
+    return await response.status(404).json({
+      result: false,
+      message: "Blog was not found.",
+    });
+  }
+});
+
 module.exports = blogsRouter;
