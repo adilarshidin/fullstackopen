@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
-import { useMatch } from "react-router";
 
 import Blog from "./Blog";
 import BlogAdditionForm from "./BlogAdditionForm";
@@ -16,7 +15,6 @@ const Blogs = () => {
   const dispatch = useDispatch();
   const storedUser = window.localStorage.getItem("user");
   const userData = storedUser ? JSON.parse(storedUser) : null;
-  const userMatch = useMatch("/blogs/:id");
 
   const blogsQuery = useQuery({
     queryKey: ["blogs"],
@@ -42,9 +40,6 @@ const Blogs = () => {
   if (blogsQuery.isLoading) return <div>Loading...</div>;
   const blogs = blogsQuery.data;
 
-  const matchedUserBlogs = userMatch ?
-    blogs.map(blog => blog.user.id === userMatch.params.id ? blog : null) :
-    null;
   const sortedBlogs = blogs.sort(
     (firstBlog, secondBlog) => secondBlog.likes - firstBlog.likes,
   );
@@ -54,21 +49,13 @@ const Blogs = () => {
     <div>
       <h3>User: {userData.name}</h3>
       <hr />
-      {matchedUserBlogs ?
-        matchedUserBlogs.map((blog) => (
-          <Blog
-            blog={blog}
-            blogs={sortedBlogs}
-            userData={userData}
-          />
-        )) :
-        blogs.map((blog) => (
-          <Blog
-            blog={blog}
-            blogs={sortedBlogs}
-            userData={userData}
-          />
-        ))}
+      {blogs.map((blog) => (
+        <Blog
+          blog={blog}
+          blogs={sortedBlogs}
+          userData={userData}
+        />
+      ))}
       <Togglable buttonLabel="Add a new blog" ref={togglableRef}>
         <BlogAdditionForm
           blogs={sortedBlogs}

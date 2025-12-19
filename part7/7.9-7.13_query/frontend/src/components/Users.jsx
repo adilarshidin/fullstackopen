@@ -27,7 +27,7 @@ const Users = () => {
           {usersQuery.data.map(user =>
             <tr>
               <td>
-                <Link to={`/blogs/${user.id}`}>{user.name}</Link>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
               </td>
               <td>
                 {user.blogs.length}

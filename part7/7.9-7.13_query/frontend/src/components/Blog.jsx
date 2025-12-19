@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router";
 
 import Togglable from "../components/Togglable";
 
@@ -106,7 +107,7 @@ const Blog = ({ blog, userData }) => {
   return (
     <div style={blogStyles.container} className="blog">
       <span style={blogStyles.titleWrapper}>
-        <h4 style={blogStyles.title}>{blog.title}</h4>
+        <Link to={`/blogs/${blog.id}`}><h4 style={blogStyles.title}>{blog.title}</h4></Link>
         <p style={blogStyles.text}>Author: {blog.author}</p>
       </span>
       <Togglable buttonLabel="View">
