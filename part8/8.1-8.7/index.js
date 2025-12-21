@@ -1,7 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid');
-const { GraphQLError } = require('graphql')
 
 let authors = [
   {
@@ -165,7 +164,7 @@ const resolvers = {
     addBook: (root, args) => {
       const book = { ...args, id: uuid() }
       if (!authors.find(author => author.name === args.author)) {
-        authors.push({ name: args.author })
+        authors.push({ name: args.author, id: uuid() })
       }
       books.push(book)
       return book
