@@ -172,14 +172,7 @@ const resolvers = {
     },
     editAuthor: (root, args) => {
       const updatedAuthor = authors.find(author => author.name === args.name)
-      if (!updatedAuthor) {
-        throw new GraphQLError("Author not found", {
-          extensions: {
-            code: "ENTITY_NOT_FOUND",
-            invalidArgs: args.name
-          }
-        })
-      }
+      if (!updatedAuthor) return null;
       updatedAuthor.born = args.born
       authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
       return updatedAuthor
