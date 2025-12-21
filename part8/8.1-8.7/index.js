@@ -2,6 +2,7 @@ const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid');
 const mongoose = require('mongoose');
+const { GraphQLError } = require('graphql')
 require('dotenv').config()
 mongoose.set('strictQuery', false);
 
@@ -168,15 +169,44 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
 
       if (!author) {
-        author = new Author({ name: args.author })
-        await author.save()
+        try {
+          author = new Author({ name: args.author })
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError("Could not save the new author", {
+            extensions: {
+              code: "BAD_AUTHOR_INPUT",
+              error
+            }
+          })
+        }
       }
-      const book = new Book({ ...args, author: author._id })
-      await book.save()
-      return await Book.findById(book._id).populate('author', { name: true, born: true })
+
+      try {
+        const book = new Book({ ...args, author: author._id })
+        await book.save()
+        return await Book.findById(book._id).populate('author', { name: true, born: true })
+      } catch (error) {
+        throw new GraphQLError("Could not save a new book", {
+          extensions: {
+            code: "BAD_BOOK_INPUT",
+            error
+          }
+        })
+      }
     },
     editAuthor: async (root, args) => {
-      return await Author.findOneAndUpdate({ name: args.name }, { born: args.born }, { new: true })
+      try {
+        return await Author.findOneAndUpdate({ name: args.name }, { born: args.born }, { new: true })
+      } catch (error) {
+        throw new GraphQLError("Could not edit the author", {
+          extensions: {
+            code: "BAD_AUTHOR_INPUT",
+            invalidArgs: [args.name, args.born],
+            error
+          }
+        })
+      }
     }
   }
 }
