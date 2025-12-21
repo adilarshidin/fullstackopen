@@ -1,6 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 const { v1: uuid } = require('uuid');
+const { GraphQLError } = require('graphql')
 
 let authors = [
   {
@@ -128,6 +129,10 @@ const typeDefs = /* GraphQL */ `
       published: Int!
       genres: [String!]!
     ): Book
+    editAuthor(
+      name: String!
+      born: Int!
+    ): Author
   }
 `
 
@@ -164,6 +169,20 @@ const resolvers = {
       }
       books.push(book)
       return book
+    },
+    editAuthor: (root, args) => {
+      const updatedAuthor = authors.find(author => author.name === args.name)
+      if (!updatedAuthor) {
+        throw new GraphQLError("Author not found", {
+          extensions: {
+            code: "ENTITY_NOT_FOUND",
+            invalidArgs: args.name
+          }
+        })
+      }
+      updatedAuthor.born = args.born
+      authors = authors.map(author => author.name === args.name ? updatedAuthor : author)
+      return updatedAuthor
     }
   }
 }
