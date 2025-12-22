@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client"
+import { gql } from "@apollo/client";
 
 const ALL_AUTHORS = gql`
   query {
@@ -34,7 +34,12 @@ const CREATE_BOOK = gql`
     $published: Int!
     $genres: [String!]!
   ) {
-    addBook (title: $title, author: $author, published: $published, genres: $genres) {
+    addBook(
+      title: $title
+      author: $author
+      published: $published
+      genres: $genres
+    ) {
       id
       title
       author {
@@ -49,11 +54,8 @@ const CREATE_BOOK = gql`
 `;
 
 const UPDATE_AUTHOR = gql`
-  mutation editAuthor(
-    $name: String!
-    $born: Int!
-  ) {
-    editAuthor (name: $name, born: $born) {
+  mutation editAuthor($name: String!, $born: Int!) {
+    editAuthor(name: $name, born: $born) {
       name
       born
       id
@@ -62,11 +64,8 @@ const UPDATE_AUTHOR = gql`
 `;
 
 const LOGIN = gql`
-  mutation login(
-    $username: String!
-    $password: String!
-  ) {
-    login (username: $username, password: $password) {
+  mutation login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
       value
       favoriteGenre
     }

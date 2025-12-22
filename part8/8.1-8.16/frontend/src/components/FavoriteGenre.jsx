@@ -1,15 +1,15 @@
-import { useQuery } from "@apollo/client/react"
+import { useQuery } from "@apollo/client/react";
 
-import { ALL_BOOKS } from "../queries"
+import { ALL_BOOKS } from "../queries";
 
 const FavoriteGenre = () => {
   const books = useQuery(ALL_BOOKS, {
-    variables: { genre: localStorage.getItem("favoriteGenre") }
-  })
+    variables: { genre: localStorage.getItem("favoriteGenre") },
+  });
 
-  if (books.loading) return <div>loading...</div>
+  if (books.loading) return <div>loading...</div>;
 
-    return (
+  return (
     <div>
       <h2>books in the favourite genre</h2>
 
@@ -30,7 +30,7 @@ const FavoriteGenre = () => {
         </tbody>
       </table>
     </div>
-  )
-}
+  );
+};
 
-export default FavoriteGenre
+export default FavoriteGenre;

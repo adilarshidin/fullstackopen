@@ -1,21 +1,21 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   favoriteGenre: {
-    type: String
-  }
-})
+    type: String,
+  },
+});
 userSchema.set("toJson", {
   transform(document, returnedObject) {
-    returnedObject.id = String(returnedObject._id)
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
+    returnedObject.id = String(returnedObject._id);
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
 
-module.exports = mongoose.model("User", userSchema)
+module.exports = mongoose.model("User", userSchema);
