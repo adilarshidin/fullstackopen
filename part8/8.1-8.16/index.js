@@ -202,7 +202,6 @@ const resolvers = {
       if (!author) {
         try {
           author = new Author({ name: args.author })
-          console.log(author)
           await author.save()
         } catch (error) {
           throw new GraphQLError("Could not save the new author", {
@@ -219,7 +218,6 @@ const resolvers = {
         await book.save()
         return await Book.findById(book._id).populate('author', { name: true, born: true })
       } catch (error) {
-        console.log(error)
         throw new GraphQLError("Could not save a new book", {
           extensions: {
             code: "BAD_BOOK_INPUT",

@@ -3,11 +3,11 @@ import { useQuery } from "@apollo/client/react"
 import { ALL_BOOKS } from "../queries"
 
 const FavoriteGenre = () => {
-  const books = useQuery(ALL_BOOKS)
+  const books = useQuery(ALL_BOOKS, {
+    variables: { genre: localStorage.getItem("favoriteGenre") }
+  })
 
   if (books.loading) return <div>loading...</div>
-  const favoriteGenreBooks = books.data.allBooks.filter(book =>
-    book.genres.includes(localStorage.getItem("favoriteGenre")))
 
     return (
     <div>
@@ -20,7 +20,7 @@ const FavoriteGenre = () => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {favoriteGenreBooks.map((a) => (
+          {books.data.allBooks.map((a) => (
             <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
