@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', false)
 const Person = require('./models/person')
+const User = require('./models/user')
 
 require('dotenv').config()
 
@@ -44,7 +45,7 @@ let persons = [
   },
 ]
 
-const typeDefs = gql`
+const typeDefs = /* GraphQL */ `
   type User {
     username: String!
     friends: [Person!]!
@@ -146,6 +147,7 @@ const resolvers = {
         currentUser.friends = currentUser.friends.concat(person)
         await currentUser.save()
       } catch (error) {
+        console.log(error)
         throw new GraphQLError('Saving person failed', {
           extensions: {
             code: 'BAD_USER_INPUT',
