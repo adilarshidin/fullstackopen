@@ -115,6 +115,7 @@ const typeDefs = /* GraphQL */ `
 
   type Token {
     value: String!
+    favoriteGenre: String
   }
 
   type Author {
@@ -251,7 +252,7 @@ const resolvers = {
     },
     createUser: async (root, args) => {
       try {
-        const user = new User({ username: args.username })
+        const user = new User({ username: args.username, favoriteGenre: args.favoriteGenre })
         return user.save()
       } catch (error) {
         throw new GraphQLError("Failed saving a new user", {
@@ -279,7 +280,7 @@ const resolvers = {
         username: user.username,
         id: user.id
       }
-      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) }
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET), favoriteGenre: user.favoriteGenre }
     }
   }
 }

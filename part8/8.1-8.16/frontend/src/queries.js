@@ -68,6 +68,7 @@ const LOGIN = gql`
   ) {
     login (username: $username, password: $password) {
       value
+      favoriteGenre
     }
   }
 `;

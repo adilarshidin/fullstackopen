@@ -14,9 +14,10 @@ const LoginForm = ({ setToken }) => {
     event.preventDefault()
     const result = await login({ variables: { username, password } })
     if (await result.data) {
-      const token = result.data.login.value
-      localStorage.setItem("token", token)
-      setToken(token)
+      const { value, favoriteGenre } = result.data.login
+      localStorage.setItem("token", value)
+      localStorage.setItem("favoriteGenre", favoriteGenre)
+      setToken(value)
     }
   }
 
