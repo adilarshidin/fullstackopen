@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { GraphQLError } = require("graphql");
 const { PubSub } = require('graphql-subscriptions')
+const DataLoader = require('dataloader')
 const express = require('express')
 const cors = require('cors')
 const http = require('http')
@@ -99,11 +100,9 @@ const resolvers = {
     me: (root, args, context) => context.currentUser,
   },
   Author: {
-    bookCount: async (parent) => {
-      const books = await Book.find({})
-      const authorBooks = books.filter((book) => book.author === parent.name);
-      return authorBooks.length;
-    },
+    bookCount: async (root, args, context) => {
+      return await context.bookDataLoader.load(root._id)
+    }
   },
   Mutation: {
     addBook: async (root, args, context) => {
@@ -257,10 +256,32 @@ const start = async () => {
         if (auth && auth.startsWith('Bearer ')) {
           const decodedToken = jwt.verify(auth.substring(7), process.env.JWT_SECRET)
           const currentUser = await User.findById(decodedToken.id)
-          return { currentUser }
+
+          const booksBatchFunction = async (authorIds) => {
+            const books = await Book.find({ author: { $in: authorIds }})
+            let countMap = {}
+            for (let i = 0; i < books.length; i++) {
+              if (!countMap[books[i].author]) {
+                countMap[books[i].author] = 1
+              } else {
+                countMap[books[i].author] += 1
+              }
+            }
+
+            let result = [];
+            for (let i = 0; i < authorIds.length; i++) {
+              result.push(countMap[authorIds[i]] || 0)
+            }
+
+            return result
+          }
+
+          const bookDataLoader = new DataLoader(booksBatchFunction)
+
+          return { currentUser, bookDataLoader }
         }
-      },
-    }),
+      }
+    })
   )
 
   const PORT = 4000

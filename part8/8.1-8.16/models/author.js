@@ -8,7 +8,7 @@ const authorSchema = mongoose.Schema({
   },
   born: {
     type: Number,
-  },
+  }
 });
 authorSchema.set("toJSON", {
   transform: (document, returnedObject) => {
