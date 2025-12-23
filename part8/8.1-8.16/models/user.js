@@ -10,7 +10,7 @@ const userSchema = mongoose.Schema({
     type: String,
   },
 });
-userSchema.set("toJson", {
+userSchema.set("toJSON", {
   transform(document, returnedObject) {
     returnedObject.id = String(returnedObject._id);
     delete returnedObject._id;
