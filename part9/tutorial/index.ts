@@ -1,20 +1,20 @@
-type Operation = "multiply" | "add" | "divide";
+import express from "express";
+import calculator from "./calculator";
 
-const calculator = (a: number, b: number, op: Operation): number => {
-  switch(op) {
-    case 'multiply':
-      return a * b;
-    case 'divide':
-      if (b === 0) throw new Error('Can\'t divide by 0!');
-      return a / b;
-    case 'add':
-      return a + b;
-    default:
-      throw new Error('Operation is not multiply, add or divide!');
-  }
-};
+const app = express();
 
-const a: number = Number(process.argv[2])
-const b: number = Number(process.argv[3])
+app.get('/ping', (_req, res) => {
+  res.send('pong');
+});
 
-calculator(a, b, )
+const PORT = 3003;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+app.post('/calculate', (req, res) => {
+  const { value1, value2, op } = req.body;
+  const result = calculator(value1, value2, op);
+  res.send({ result });
+});
