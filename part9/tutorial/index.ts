@@ -1,20 +1,14 @@
-import express from "express";
-import calculator from "./calculator";
-
+import express from 'express';
 const app = express();
+app.use(express.json());
+
+const PORT = 3000;
 
 app.get('/ping', (_req, res) => {
+  console.log('someone pinged here');
   res.send('pong');
 });
 
-const PORT = 3003;
-
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-});
-
-app.post('/calculate', (req, res) => {
-  const { value1, value2, op } = req.body;
-  const result = calculator(value1, value2, op);
-  res.send({ result });
 });

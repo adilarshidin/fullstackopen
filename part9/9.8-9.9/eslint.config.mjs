@@ -30,5 +30,5 @@ export default tseslint.config({
       { 'argsIgnorePattern': '^_' }
     ],
   },
-  ignores: ['build']
+  ignores: ['build', 'frontend']
 });
