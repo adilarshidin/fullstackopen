@@ -8,6 +8,8 @@ type Result = {
   explanation: string
 };
 
+type ArgsProcessingResult = Result | string;
+
 const calculateExercises = (dailyExerciseHours: number[], target: number): Result => {
   const daysTotal = dailyExerciseHours.length;
   const trainingDays = dailyExerciseHours.reduce((accumulator, currentDayHours) => {
@@ -43,4 +45,25 @@ const calculateExercises = (dailyExerciseHours: number[], target: number): Resul
   }
 }
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+const processArgs = (args: string[]): ArgsProcessingResult => {
+  if (args.length < 4) throw new Error("Not enough arguments");
+
+  for (let i = 2; i < args.length; i++) {
+    if (isNaN(Number(args[i]))) throw new Error("Argument can not be NaN")
+  };
+
+  const target = args[2];
+  const dailyExerciseHoursString = args.slice(3);
+  let dailyExerciseHours = [];
+  for (let i = 0; i < dailyExerciseHoursString.length; i++) {
+    dailyExerciseHours[i] = Number(dailyExerciseHoursString[i])
+  };
+
+  return calculateExercises(dailyExerciseHours, Number(target))
+}
+
+try {
+  console.log(processArgs(process.argv))
+} catch (error) {
+  if (error instanceof Error) console.error(error.message)
+}

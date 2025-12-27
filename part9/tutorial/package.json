@@ -8,10 +8,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "calculator": "ts-node index.ts"
+    "calculator": "ts-node index.ts",
+    "start": "ts-node index.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
