@@ -4,10 +4,11 @@ import cors from "cors";
 
 import { Diagnosis, PatientSafe } from "./types";
 import data from "../data/diagnoses";
-import { returnSafePatients } from "./services/patients";
+import { addPatient, returnSafePatients } from "./services/patients";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 app.get('/api/ping', (_req, res) => {
   res.send('pong');
@@ -15,6 +16,10 @@ app.get('/api/ping', (_req, res) => {
 
 app.get('/api/patients', (_req, res: Response<PatientSafe[]>) => {
   res.send(returnSafePatients());
+});
+
+app.post("/api/patients", (req, res) => {
+  res.send(addPatient(req.body));
 });
 
 app.get('/api/diagnoses', (_req, res: Response<Diagnosis[]>) => {
