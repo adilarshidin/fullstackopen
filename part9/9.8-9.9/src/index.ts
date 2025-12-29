@@ -2,8 +2,9 @@ import express from "express";
 import { Response } from "express";
 import cors from "cors";
 
-import { Diagnosis } from "./types";
-import data from "./data/diagnoses";
+import { Diagnosis, PatientSafe } from "./types";
+import data from "../data/diagnoses";
+import { returnSafePatients } from "./services/patients";
 
 const app = express();
 app.use(cors());
@@ -12,8 +13,8 @@ app.get('/api/ping', (_req, res) => {
   res.send('pong');
 });
 
-app.get('/api/patients', (_req, res) => {
-  res.send({ "patient1": { "id": "1", "name": "guy", "gender": "m", "occupation": "dunno" } });
+app.get('/api/patients', (_req, res: Response<PatientSafe[]>) => {
+  res.send(returnSafePatients());
 });
 
 app.get('/api/diagnoses', (_req, res: Response<Diagnosis[]>) => {
