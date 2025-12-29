@@ -1,0 +1,9 @@
+import type { JSX } from "react";
+
+interface HeaderProps {
+  courseName: string
+}
+
+const Header = (props: HeaderProps): JSX.Element => <h1>{props.courseName}</h1>;
+
+export default Header;
