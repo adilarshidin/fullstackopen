@@ -1,9 +1,9 @@
 import express from 'express';
-import { Response } from 'express';
+import { Response, NextFunction, Request } from 'express';
 
 import diaryService from '../services/diaryService';
-import { NonSensitiveDiaryEntry } from '../types';
-import { toNewDiaryEntry } from "../utils";
+import { NonSensitiveDiaryEntry, NewDiaryEntry, DiaryEntry } from '../types';
+import { NewEntrySchema } from '../utils';
 
 const router = express.Router();
 
@@ -21,14 +21,18 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post('/', (req, res) => {
+const newDiaryParser = (req: Request, _res: Response, next: NextFunction) => { 
   try {
-    const newDiaryEntry = toNewDiaryEntry(req.body);
-    const addedEntry = diaryService.addDiary(newDiaryEntry);
-    res.json(addedEntry);
-  } catch (error) {
-    if (error instanceof Error) res.status(400).send(error.message);
-  };
+    NewEntrySchema.parse(req.body);
+    next();
+  } catch (error: unknown) {
+    next(error);
+  }
+};
+
+router.post('/', newDiaryParser, (req: Request<unknown, unknown, NewDiaryEntry>, res: Response<DiaryEntry>) => {
+  const addedEntry = diaryService.addDiary(req.body);
+  res.json(addedEntry);
 });
 
 export default router;

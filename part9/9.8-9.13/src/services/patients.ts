@@ -1,6 +1,6 @@
 import data from "../../data/patients";
 import { toPatient, toNewPatient } from "../utils";
-import { NewPatient, PatientSafe } from "../types";
+import { InitPatient, PatientSafe } from "../types";
 
 const patients = data.map(entry => toPatient(entry));
 
@@ -11,7 +11,7 @@ const returnSafePatients = (): PatientSafe[] => {
 };
 
 const addPatient = (data: unknown): PatientSafe => {
-  const newPatient: NewPatient = toNewPatient(data);
+  const newPatient: InitPatient = toNewPatient(data);
   patients.push(newPatient);
   return {
     id: newPatient.id,

@@ -1,6 +1,6 @@
 import { v1 as uuid } from "uuid";
 
-import { NewPatient, Gender, InitPatient } from "./types";
+import { Gender, InitPatient } from "./types";
 
 const isString = (field: unknown): field is string => {
   return typeof field === "string" || field instanceof String;
@@ -53,7 +53,7 @@ const occupationValid = (occupation: unknown): string => {
   }
 };
 
-const toNewPatient = (patient: unknown): NewPatient => {
+const toNewPatient = (patient: unknown): InitPatient => {
   if (!patient || !(patient instanceof Object || !(typeof patient !== "object"))) {
     throw new Error("Incorrect or missing patient data");
   };
