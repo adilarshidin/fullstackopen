@@ -2,10 +2,12 @@ import { useMatch } from "react-router-dom";
 
 import { getPatientRequest } from "../services/patients";
 import { useEffect, useState } from "react";
-import { Patient } from "../types";
+import { Diagnosis, Patient } from "../types";
+import { getDiagnosesRequest } from "../services/diagnoses";
 
 const PatientView = () => {
   const [patient, setPatient] = useState<Patient>();
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>();
   const matchedPatient = useMatch("/patients/:id");
 
   useEffect(() => {
@@ -16,10 +18,16 @@ const PatientView = () => {
       }
     };
 
+    const getDiagnoses = async () => {
+      const diagnoses = await getDiagnosesRequest();
+      if (diagnoses) setDiagnoses(diagnoses);
+    };
+
     getPatient();
+    getDiagnoses();
   }, [matchedPatient?.params.id]);
 
-  if (!patient) return <div>Not found.</div>;
+  if (!patient || !diagnoses) return <div>Not found.</div>;
 
   return (
     <div>
@@ -31,7 +39,12 @@ const PatientView = () => {
         <div key={entry.id}>
           <p>{entry.date} {entry.description}</p>
           <ul>
-            {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
+            {entry.diagnosisCodes?.map(code => (
+                <li key={code}>
+                  {code} {diagnoses.find(diagnoses => diagnoses.code === code)?.name}
+                </li>
+              )
+            )}
           </ul>
         </div>
       ))}
