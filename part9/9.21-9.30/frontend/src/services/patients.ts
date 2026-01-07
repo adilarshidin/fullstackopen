@@ -20,7 +20,16 @@ const create = async (object: PatientFormValues) => {
   return data;
 };
 
+const getPatientRequest = async (id: string) => {
+  const response = await fetch(`${apiBaseUrl}/patients/${id}`);
+  const data = await response.json();
+  return data;
+};
+
 export default {
   getAll, create
 };
 
+export {
+  getPatientRequest
+};
