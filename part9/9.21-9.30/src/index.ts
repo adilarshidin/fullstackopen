@@ -4,14 +4,14 @@ import cors from "cors";
 import {
   Diagnosis,
   NewPatientSchema,
-  PatientSafe,
+  SafePatient,
   NewPatient
 } from "./types";
 import data from "../data/diagnoses";
 import {
   addPatient,
   getSafePatients,
-  getSafePatient
+  getPatientFull
 } from "./services/patients";
 
 const app = express();
@@ -31,7 +31,7 @@ app.get('/api/ping', (_req, res) => {
   res.send('pong');
 });
 
-app.get('/api/patients', (_req, res: Response<PatientSafe[]>) => {
+app.get('/api/patients', (_req, res: Response<SafePatient[]>) => {
   res.send(getSafePatients());
 });
 
@@ -40,14 +40,14 @@ app.post(
   newPatientParser,
   (
     req: Request<unknown, unknown, NewPatient>,
-    res: Response<PatientSafe>
+    res: Response<SafePatient>
   ) => {
   const addedPatient = addPatient(req.body);
   res.json(addedPatient);
 });
 
 app.get("/api/patients/:id", (req, res) => {
-  res.json(getSafePatient(req.params.id));
+  res.json(getPatientFull(req.params.id));
 });
 
 app.get('/api/diagnoses', (_req, res: Response<Diagnosis[]>) => {
