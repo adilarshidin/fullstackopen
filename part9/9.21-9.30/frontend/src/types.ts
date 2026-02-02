@@ -5,11 +5,12 @@ enum HealthCheckRating {
   "CriticalRisk" = 3
 }
 
-interface BaseEntry {
+export interface BaseEntry {
   id: string;
   description: string;
   date: string;
   specialist: string;
+  employerName: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
@@ -35,7 +36,7 @@ interface OccupationalHealthcareEntry extends BaseEntry {
   }
 }
 
-type Entry = HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
+export type Entry = HospitalEntry | OccupationalHealthcareEntry | HealthCheckEntry;
 // Define special omit for unions
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 // Define Entry without the 'id' property

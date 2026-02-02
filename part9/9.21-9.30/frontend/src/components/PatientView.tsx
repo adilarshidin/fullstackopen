@@ -4,6 +4,7 @@ import { getPatientRequest } from "../services/patients";
 import { useEffect, useState } from "react";
 import { Diagnosis, Patient } from "../types";
 import { getDiagnosesRequest } from "../services/diagnoses";
+import EntryView from "./EntryView";
 
 const PatientView = () => {
   const [patient, setPatient] = useState<Patient>();
@@ -36,17 +37,7 @@ const PatientView = () => {
       <p>{patient.occupation}</p>
       <h3>Entries</h3>
       {patient.entries.map(entry => (
-        <div key={entry.id}>
-          <p>{entry.date} {entry.description}</p>
-          <ul>
-            {entry.diagnosisCodes?.map(code => (
-                <li key={code}>
-                  {code} {diagnoses.find(diagnoses => diagnoses.code === code)?.name}
-                </li>
-              )
-            )}
-          </ul>
-        </div>
+        <EntryView key={entry.id} entry={entry} diagnoses={diagnoses} />
       ))}
     </div>
   );
