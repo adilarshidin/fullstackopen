@@ -1,5 +1,14 @@
 import { useState, SyntheticEvent } from "react";
-import { TextField, InputLabel, MenuItem, Select, Grid, Button, SelectChangeEvent } from '@mui/material';
+import {
+  Input,
+  TextField,
+  InputLabel,
+  MenuItem,
+  Select,
+  Grid,
+  Button,
+  SelectChangeEvent
+} from '@mui/material';
 
 import { EntryFormValues, EntryType, Diagnosis, HealthCheckRating } from "../../types";
 import data from "../../../../data/diagnoses";
@@ -103,12 +112,16 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
       <form onSubmit={addEntry}>
         <TextField
           label="Description"
+          required
           fullWidth 
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <TextField
-          label="Date"
+        <InputLabel style={{ marginTop: 20 }}>Date</InputLabel>
+        <Input
+          type="date"
+          required
+          name="Date"
           placeholder="YYYY-MM-DD"
           fullWidth
           value={date}
@@ -116,6 +129,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         />
         <TextField
           label="Specialist"
+          required
           fullWidth
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
@@ -124,6 +138,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         <InputLabel style={{ marginTop: 20 }}>Entry Type</InputLabel>
         <Select
           label="Entry Type"
+          required
           fullWidth
           value={entryType}
           onChange={onEntryTypeChange}
@@ -141,6 +156,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         <InputLabel style={{ marginTop: 20 }}>Diagnosis Code</InputLabel>
         <Select
           label="Diagnosis Code"
+          required
           fullWidth
           multiple
           value={diagnosisCodes}
@@ -159,6 +175,7 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
         {entryType === EntryType.HealthCheck && (
           <TextField
             label="Health Check Rating"
+            required
             type="number"
             fullWidth
             value={healthCheckRating}
@@ -175,14 +192,18 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
 
         {entryType === EntryType.Hospital && (
           <>
-            <TextField
-              label="Discharge Date"
+            <InputLabel style={{ marginTop: 20 }}>Discharge Date</InputLabel>
+            <Input
+              type="date"
+              required
+              name="Discharge Date"
               fullWidth
               value={dischargeDate}
               onChange={({ target }) => setDischargeDate(target.value)}
             />
             <TextField
               label="Discharge Criteria"
+              required
               fullWidth
               value={dischargeCriteria}
               onChange={({ target }) => setDischargeCriteria(target.value)}
@@ -194,18 +215,25 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
           <>
             <TextField
               label="Employer Name"
+              required
               fullWidth
               value={employerName}
               onChange={({ target }) => setEmployerName(target.value)}
             />
-            <TextField
-              label="Sick Leave Start Date"
+            <InputLabel style={{ marginTop: 20 }}>Sick Leave Start Date</InputLabel>
+            <Input
+              type="date"
+              required
+              name="Sick Leave Start Date"
               fullWidth
               value={sickLeaveStartDate}
               onChange={({ target }) => setSickLeaveStartDate(target.value)}
             />
-            <TextField
-              label="Sick Leave End Date"
+            <InputLabel style={{ marginTop: 20 }}>Sick Leave End Date</InputLabel>
+            <Input
+              type="date"
+              required
+              name="Sick Leave End Date"
               fullWidth
               value={sickLeaveEndDate}
               onChange={({ target }) => setSickLeaveEndDate(target.value)}
