@@ -15,8 +15,8 @@ interface EntryTypeOption{
 }
 
 const allowedHealthCheckValues = Object.values(HealthCheckRating).filter(
-  value => typeof(value) === "number" ? value : null
-);
+  (value) => typeof(value) === "number"
+) as number[];
 
 const entryTypeOptions: EntryTypeOption[] = Object.values(EntryType).map(v => ({
   value: v, label: v.toString()
@@ -165,8 +165,8 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
             onChange={({ target }) => setHealthCheckRating(Number(target.value))}
             inputProps={
               {
-                min: allowedHealthCheckValues[0],
-                max: allowedHealthCheckValues.length,
+                min: Math.min(...allowedHealthCheckValues),
+                max: Math.max(...allowedHealthCheckValues),
                 step: 1
               }
             }

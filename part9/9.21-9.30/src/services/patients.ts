@@ -41,14 +41,22 @@ const getPatientFull = (id: string): FullPatient | null => {
   return null;
 };
 
-const addPatientEntry = (id: string, body: unknown): FullPatient | null => {
-  const newEntry = toEntry(body);
-  const patientFound= data.find(patient => patient.id === id);
-  if (patientFound) {
-    patientFound.entries.push(newEntry);
-    return patientFound;
+const addPatientEntry = (id: string, body: unknown): FullPatient | object => {
+  try {
+    console.log(body);
+    const newEntry = toEntry(body);
+
+    const patientFound= data.find(patient => patient.id === id);
+    if (patientFound) {
+      patientFound.entries.push(newEntry);
+      return patientFound;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      return { "message": error.message };
+    }
   }
-  return null;
+  return { "message": "Unknown error" };
 };
 
 export { getSafePatients, addPatient, getSafePatient, getPatientFull, addPatientEntry };

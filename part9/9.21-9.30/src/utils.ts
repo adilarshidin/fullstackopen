@@ -132,9 +132,9 @@ const isObject = (field: unknown): field is object => {
   return typeof field === "object" || field instanceof Object;
 };
 
-const isHealthCheckRating = (healthCheckRating: number): healthCheckRating is HealthCheckRating => {
-  return Boolean(Object.values(HealthCheckRating).find(value => Number(value) === healthCheckRating));  
-};
+const isHealthCheckRating = (value: number): value is HealthCheckRating =>
+  (Object.values(HealthCheckRating) as number[]).includes(value);
+
 const parseDiagnosisCodes = (object: unknown): Array<Diagnosis['code']> =>  {
   if (!object || typeof object !== 'object' || !('diagnosisCodes' in object)) {
     return [] as Array<Diagnosis['code']>;

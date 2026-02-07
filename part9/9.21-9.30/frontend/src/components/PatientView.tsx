@@ -46,14 +46,17 @@ const PatientView = () => {
   const submitNewEntry = async (id: string, values: EntryFormValues) => {
     try {
       const entry = await updatePatient(id, values);
-      const newPatient = { ...patient, entries: patient.entries.concat(entry) };
-      setPatient(newPatient);
-      setModalOpen(false);
+      if ("message" in entry && typeof(entry.message) === "string") {
+        setError(entry.message);
+      } else {
+        const newPatient = { ...patient, entries: patient.entries.concat(entry) };
+        setPatient(newPatient);
+        setModalOpen(false);
+      }
     } catch (e: unknown) {
       if (axios.isAxiosError(e)) {
         if (e?.response?.data && typeof e?.response?.data === "string") {
           const message = e.response.data.replace('Something went wrong. Error: ', '');
-          console.error(message);
           setError(message);
         } else {
           setError("Unrecognized axios error");

@@ -57,8 +57,9 @@ app.post("/api/patients/:id/entries", (req: Request, res: Response<Entry | objec
   const result = addPatientEntry(req.params.id, body);
   if (result) {
     res.json(result);
+  } else {
+    res.status(404).json({ "message": "Patient not found" });
   }
-  res.status(404).json({ "message": "Patient not found" });
 });
 
 app.get('/api/diagnoses', (_req, res: Response<Diagnosis[]>) => {
