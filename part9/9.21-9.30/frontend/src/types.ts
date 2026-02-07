@@ -1,8 +1,14 @@
-enum HealthCheckRating {
+export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
   "HighRisk" = 2,
   "CriticalRisk" = 3
+}
+
+export enum EntryType {
+  HealthCheck = "HealthCheck",
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare"
 }
 
 export interface BaseEntry {
@@ -10,7 +16,6 @@ export interface BaseEntry {
   description: string;
   date: string;
   specialist: string;
-  employerName: string;
   diagnosisCodes?: Array<Diagnosis["code"]>;
 }
 
@@ -66,3 +71,7 @@ export interface Patient {
 
 export type NonSensitivePatient = Omit<Patient, "ssn" | "entries">;
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+export type EntryFormValues = 
+  | Omit<HealthCheckEntry, "id">
+  | Omit<HospitalEntry, "id">
+  | Omit<OccupationalHealthcareEntry, "id">;

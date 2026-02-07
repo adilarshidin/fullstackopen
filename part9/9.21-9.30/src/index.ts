@@ -5,13 +5,15 @@ import {
   Diagnosis,
   NewPatientSchema,
   SafePatient,
-  NewPatient
+  NewPatient,
+  Entry
 } from "./types";
 import data from "../data/diagnoses";
 import {
   addPatient,
   getSafePatients,
-  getPatientFull
+  getPatientFull,
+  addPatientEntry
 } from "./services/patients";
 
 const app = express();
@@ -48,6 +50,15 @@ app.post(
 
 app.get("/api/patients/:id", (req, res) => {
   res.json(getPatientFull(req.params.id));
+});
+
+app.post("/api/patients/:id/entries", (req: Request, res: Response<Entry | object>) => {
+  const body: unknown = req.body;
+  const result = addPatientEntry(req.params.id, body);
+  if (result) {
+    res.json(result);
+  }
+  res.status(404).json({ "message": "Patient not found" });
 });
 
 app.get('/api/diagnoses', (_req, res: Response<Diagnosis[]>) => {

@@ -12,6 +12,12 @@ enum Gender {
   Other = "other"
 };
 
+enum EntryType {
+  HealthCheck = "HealthCheck",
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare"
+};
+
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
@@ -28,12 +34,12 @@ interface BaseEntry {
 }
 
 interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: EntryType.HealthCheck;
   healthCheckRating: HealthCheckRating;
 }
 
 interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
+  type: EntryType.Hospital;
   discharge: {
     date: string;
     criteria: string;
@@ -41,7 +47,7 @@ interface HospitalEntry extends BaseEntry {
 }
 
 interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+  type: EntryType.OccupationalHealthcare;
   employerName: string;
   sickLeave?: {
     startDate: string;
@@ -78,11 +84,15 @@ interface FullPatient extends InitPatient {
 export {
   Diagnosis,
   Gender,
+  EntryType,
   SafePatient,
   InitPatient,
   NewPatientSchema,
   NewPatient,
   FullPatient,
   Entry,
-  EntryWithoutId
+  EntryWithoutId,
+  HealthCheckEntry,
+  OccupationalHealthcareEntry,
+  HospitalEntry
 };

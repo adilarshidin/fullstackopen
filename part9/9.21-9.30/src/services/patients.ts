@@ -1,6 +1,10 @@
 import data from "../../data/patients";
-import { toPatient, toNewPatient } from "../utils";
-import { FullPatient, InitPatient, SafePatient } from "../types";
+import { toPatient, toNewPatient, toEntry } from "../utils";
+import {
+  FullPatient,
+  InitPatient,
+  SafePatient
+} from "../types";
 
 const patients = data.map(entry => toPatient(entry));
 
@@ -37,4 +41,14 @@ const getPatientFull = (id: string): FullPatient | null => {
   return null;
 };
 
-export { getSafePatients, addPatient, getSafePatient, getPatientFull };
+const addPatientEntry = (id: string, body: unknown): FullPatient | null => {
+  const newEntry = toEntry(body);
+  const patientFound= data.find(patient => patient.id === id);
+  if (patientFound) {
+    patientFound.entries.push(newEntry);
+    return patientFound;
+  }
+  return null;
+};
+
+export { getSafePatients, addPatient, getSafePatient, getPatientFull, addPatientEntry };
